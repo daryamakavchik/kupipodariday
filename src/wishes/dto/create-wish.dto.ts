@@ -9,6 +9,8 @@ import {
   Max,
   IsArray,
 } from 'class-validator';
+import { Offer } from 'src/offers/entities/offer.entity';
+import { User } from 'src/users/entities/user.entity';
 
 export class CreateWishDto {
   @IsDefined()
@@ -38,7 +40,7 @@ export class CreateWishDto {
   raised: number;
 
   @IsUrl()
-  owner: string;
+  owner: User;
 
   @IsNumber()
   @Min(1)
@@ -46,7 +48,7 @@ export class CreateWishDto {
   description: number;
 
   @IsArray()
-  offers: [];
+  offers: Offer[];
 
   @IsNumber()
   copied: number;

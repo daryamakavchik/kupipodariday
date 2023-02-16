@@ -1,34 +1,41 @@
 import {
-  Body,
   Controller,
-  Delete,
-  Get,
-  NotFoundException,
-  Param,
+  UseGuards,
   Post,
+  Req,
+  Body,
+  Get,
+  Param,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CreateOfferDto } from './dto/create-offer.dto';
+import { OffersService } from './offers.service';
 
 @Controller('offers')
 export class OffersController {
-  private offers = [
-    {
-      id: '1',
-      name: 'Sherlock Holmes',
-      email: 'smarty@221b.uk',
-    },
-    {
-      id: '2',
-      name: 'John H. Whatson',
-      email: 'doctor@221b.uk',
-    },
-    {
-      id: '3',
-      name: 'Mrs Hudson',
-      email: 'hostess@221b.uk',
-    },
-  ];
+  constructor(private offerService: OffersService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async create(@Req() req, @Body() createOfferDto: CreateOfferDto) {
+    const offer = await this.offerService.create(createOfferDto, req.user.id);
+
+    return offer;
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.offers;
+  async getOffers() {
+    const offers = await this.offerService.findMany();
+
+    return offers;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async getOfferById(@Param('id') id: number) {
+    const offer = await this.offerService.findOne(id);
+
+    return offer;
   }
 }

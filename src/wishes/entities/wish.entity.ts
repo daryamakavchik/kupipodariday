@@ -27,7 +27,7 @@ export class Wish {
   @Column()
   link: string;
 
-  @Column() //validate URL
+  @Column()
   image: string;
 
   @Column('numeric', { scale: 2 })

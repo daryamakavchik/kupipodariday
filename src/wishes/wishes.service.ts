@@ -1,17 +1,16 @@
-
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Wish } from './entities/wish.entity';
-import { Repository } from 'typeorm';
-import { CreateWishDto } from './dto/create-wish.dto';
-import { User } from '../users/entities/user.entity';
-import { UpdateWishDto } from './dto/update-wish.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Wish } from "./entities/wish.entity";
+import { Repository } from "typeorm";
+import { CreateWishDto } from "./dto/create-wish.dto";
+import { User } from "../users/entities/user.entity";
+import { UpdateWishDto } from "./dto/update-wish.dto";
 
 @Injectable()
 export class WishesService {
   constructor(
     @InjectRepository(Wish)
-    private wishRepository: Repository<Wish>,
+    private wishRepository: Repository<Wish>
   ) {}
 
   async create(createWishDto: CreateWishDto, owner: User) {
@@ -25,13 +24,13 @@ export class WishesService {
 
   async findOne(id: number) {
     const wish = await this.wishRepository
-      .createQueryBuilder('wish')
-      .leftJoinAndSelect('wish.owner', 'owner')
-      .leftJoinAndSelect('wish.offers', 'offers')
-      .leftJoinAndSelect('offers.user', 'user')
-      .leftJoinAndSelect('user.wishes', 'wishes')
-      .leftJoinAndSelect('user.offers', 'offer')
-      .leftJoinAndSelect('user.wishlists', 'wishlists')
+      .createQueryBuilder("wish")
+      .leftJoinAndSelect("wish.owner", "owner")
+      .leftJoinAndSelect("wish.offers", "offers")
+      .leftJoinAndSelect("offers.user", "user")
+      .leftJoinAndSelect("user.wishes", "wishes")
+      .leftJoinAndSelect("user.offers", "offer")
+      .leftJoinAndSelect("user.wishlists", "wishlists")
       .where({ id })
       .getOne();
     return wish;
@@ -40,7 +39,7 @@ export class WishesService {
   async updateOne(id, updateWishDto: UpdateWishDto, user) {
     const wish = await this.findOne(id);
     if (wish.owner !== user) {
-      throw new Error('own');
+      throw new Error("own");
     }
     if (wish.offers.length > 0) {
       const { price, ...result } = updateWishDto;
@@ -52,23 +51,15 @@ export class WishesService {
   }
 
   async findMany(orderBy: string, limit: number) {
-    const wishes = await this.wishRepository
-      .createQueryBuilder('wish')
-      .limit(limit)
-      .leftJoinAndSelect('wish.owner', 'owner')
-      .leftJoinAndSelect('wish.offers', 'offers')
-      .leftJoinAndSelect('offers.user', 'user')
-      .leftJoinAndSelect('user.wishlists', 'wishlists')
-      .orderBy(`wish.${orderBy}`, 'DESC')
-      .getMany();
+    const wishes = await this.wishRepository.find();
     return wishes;
   }
 
   async getRaised(id: number) {
     const amount = await this.wishRepository
-      .createQueryBuilder('wish')
-      .select('wish.raised')
-      .addSelect('wish.price')
+      .createQueryBuilder("wish")
+      .select("wish.raised")
+      .addSelect("wish.price")
       .where({ id })
       .getOne();
     return amount;
@@ -99,15 +90,47 @@ export class WishesService {
       throw new NotFoundException();
     }
     if (+wish.owner !== userId) {
-      throw new Error('own');
+      throw new Error("own");
     }
     await this.wishRepository
       .createQueryBuilder()
       .delete()
       .from(Wish)
-      .where('id = :id', { id })
+      .where("id = :id", { id })
       .execute();
 
     return wish;
+  }
+
+  async copyWish(id: number, userId: User) {
+    const {
+      createdAt,
+      updatedAt,
+      name,
+      link,
+      image,
+      price,
+      description,
+      raised,
+      owner,
+      offers,
+      copied,
+    } = await this.findOne(id);
+    const wishCopy = {
+      id,
+      createdAt,
+      updatedAt,
+      name,
+      link,
+      image,
+      price,
+      description,
+      raised,
+      owner,
+      offers,
+      copied,
+    };
+    await this.create(wishCopy, userId);
+    await this.updateCopied(id, copied);
   }
 }

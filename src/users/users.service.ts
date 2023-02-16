@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import * as bcrypt from 'bcrypt';
+import { Injectable } from "@nestjs/common";
+import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "./entities/user.entity";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import * as bcrypt from "bcrypt";
+import { Req } from "@nestjs/common";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private usersRepository: Repository<User>
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -27,12 +28,12 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.usersRepository
-      .createQueryBuilder('user')
-      .where({ id })
-      .addSelect('user.email')
-      .getOne();
+    const user = await this.usersRepository.findOne({ where: { id }});
+    return user;
+  }
 
+  async findByUsername(username: string): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ username });
     return user;
   }
 
@@ -47,41 +48,9 @@ export class UsersService {
     return user;
   }
 
-  async findByUsername(username: string) {
-    const user = await this.usersRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.wishes', 'wish')
-      .where({ username })
-      .addSelect('user.password')
-      .addSelect('user.email')
-      .getOne();
-    return user;
-  }
-
-  async getWishes(username: string) {
-    const user = await this.usersRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.wishes', 'wish')
-      .leftJoinAndSelect('wish.owner', 'owner')
-      .leftJoinAndSelect('wish.offers', 'offers')
-      .leftJoinAndSelect('offers.user', 'item')
-      .leftJoinAndSelect('item.wishlists', 'wishlists')
-      .leftJoinAndSelect('wishlists.items', 'items')
-      .leftJoinAndSelect('wishlists.owner', 'owners')
-      .where({ username })
-      .getOne();
+  async getWishes(username) {
+    const user = await this.findByUsername(username);
     const { wishes } = user;
     return wishes;
-  }
-
-  async findMany(query: any) {
-    const users = await this.usersRepository
-      .createQueryBuilder('user')
-      .where('user.username = :username', { username: query })
-      .orWhere('user.email = :email', { email: query })
-      .addSelect('user.email')
-      .getMany();
-
-    return users;
   }
 }

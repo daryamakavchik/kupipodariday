@@ -41,33 +41,15 @@ export class OffersService {
     return this.offerRepository.save(offer);
   }
 
-  // async findMany() {
-  //   const offers = await this.offerRepository
-  //     .createQueryBuilder('offer')
-  //     .leftJoinAndSelect('offer.item', 'wish')
-  //     .leftJoinAndSelect('wish.owner', 'owner')
-  //     .leftJoinAndSelect('offer.user', 'user')
-  //     .leftJoinAndSelect('user.wishes', 'wishes')
-  //     .leftJoinAndSelect('user.offers', 'offers')
-  //     .leftJoinAndSelect('user.wishlists', 'wishlists')
-  //     .getMany();
+  async findMany() {
+    const offers = await this.offerRepository.find();
+    return offers;
+  }
 
-  //   return offers;
-  // }
-
-  // async findOne(id: number) {
-  //   const offer = await this.offerRepository
-  //     .createQueryBuilder('offer')
-  //     .where({ id })
-  //     .innerJoinAndSelect('offer.item', 'item')
-  //     .leftJoinAndSelect('item.owner', 'owner')
-  //     .leftJoinAndSelect('offer.user', 'user')
-  //     .leftJoinAndSelect('user.wishes', 'wishes')
-  //     .leftJoinAndSelect('user.offers', 'offers')
-  //     .leftJoinAndSelect('user.wishlists', 'wishlists')
-  //     .getOne();
-  //   return offer;
-  // }
+  async findOne(id: number) {
+    const offer = await this.offerRepository.findOne({ where: { id }});
+    return offer;
+  }
 
   async checkUser(item, id) {
     const itemOwnerId = await this.wishService.findOne(item);

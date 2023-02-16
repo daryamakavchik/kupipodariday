@@ -1,61 +1,49 @@
-import { User } from './entities/user.entity';
-import { UsersService } from '../users/users.service';
 import {
-  Body,
   Controller,
-  Delete,
   Get,
+  Req,
+  UseGuards,
+  Body,
   Patch,
-  NotFoundException,
   Param,
-  ParseIntPipe,
   Post,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
-
-  @Get()
-  findAll(): Promise<User[]> {
-    return this.usersService.findAll();
-  }
-
-  @Post()
-  create(@Body() user: CreateUserDto) {
-    return this.usersService.create(user);
-  }
-
-  @Delete(':id')
-  async removeById(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.usersService.findOne(id);
-    if (!user) {
-      throw new NotFoundException();
-    }
-    await this.usersService.removeById(id);
-  }
-
-  @Patch(':id')
-  async updateById(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    const user = await this.usersService.findOne(id);
-    if (!user) {
-      throw new NotFoundException('message');
-    }
-    return this.usersService.updateById(id, updateUserDto);
-  }
+  constructor(
+  private usersService: UsersService,
+  ) {}
 
   @Get('me')
-  async findById(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
+  getMe(@Req() req) {
+    return req.user;
   }
 
-  @Post('find')
-  async findUsers(@Body('query') query: string) {
-    return this.usersService.findByUsername(query);
+  @Patch('me')
+  async updateMe(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateOne(req.user.id, updateUserDto);
+  }
+
+  @Get('me/wishes')
+  async getWishes(@Req() req) {
+    const wishes = await this.usersService.getWishes(req.user.username);
+    return wishes;
+  }
+
+  @Get(':username')
+  async getUserByUsername(@Param('username') username: any) {
+    const user = await this.usersService.findByUsername(username);
+    return user;
+  }
+
+  @Get(':username/wishes')
+  async getWishesByUsername(@Param('username') username: string) {
+    const wishes = await this.usersService.getWishes(username);
+    return wishes;
   }
 }

@@ -1,10 +1,11 @@
 import { registerAs } from '@nestjs/config';
 import { User } from '../users/entities/user.entity';
+import { Offer } from '../offers/entities/offer.entity';
 import { Wish } from '../wishes/entities/wish.entity';
 import { Wishlist } from '../wishlists/entities/wishlist.entity';
-import { Offer } from '../offers/entities/offer.entity';
+import * as dotenv from 'dotenv';
 
-require('dotenv').config();
+dotenv.config();
 
 export default registerAs('database', () => {
   return {
@@ -14,7 +15,7 @@ export default registerAs('database', () => {
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
-    entities: [User, Wish, Wishlist, Offer],
+    entities: [User, Offer, Wish, Wishlist],
     synchronize: true,
   };
 });
