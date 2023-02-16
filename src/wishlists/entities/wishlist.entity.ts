@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
 import { Length } from 'class-validator';
+import { User } from 'src/users/entities/user.entity';
 import { Wish } from '../../wishes/entities/wish.entity';
 
 @Entity()
@@ -16,6 +17,9 @@ export class Wishlist {
   @Column({ type: 'varchar' })
   @Length(1, 250)
   name: string;
+
+  @ManyToOne(() => User, (user) => user.wishlists)
+  owner: User;
 
   @Column({ type: 'varchar' })
   @Length(1, 1500)

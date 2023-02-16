@@ -1,53 +1,76 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Offer } from './entities/offer.entity';
+import { Offer }  from '../offers/entities/offer.entity';
+import { Repository } from 'typeorm';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
+import { WishesService } from 'src/wishes/wishes.service';
 
 @Injectable()
 export class OffersService {
   constructor(
     @InjectRepository(Offer)
-    private readonly offerRepository: Repository<Offer>,
+    private offerRepository: Repository<Offer>,
+    private wishService: WishesService,
   ) {}
 
-  findAll(): Promise<Offer[]> {
-    return this.offerRepository.find();
+  async create(createOfferDto: CreateOfferDto, user: any) {
+    const checkUser = await this.checkUser(createOfferDto.item, user);
+
+    if (checkUser) {
+      throw new Error('own offer');
+    }
+
+    const { price, raised } = await this.wishService.getRaised(
+      +createOfferDto.item,
+    );
+
+    const newRaised = raised + createOfferDto.amount;
+    if (price < newRaised) {
+      throw new Error('too much');
+    }
+
+    const offerData = {
+      user,
+      item: createOfferDto.item,
+      amount: createOfferDto.amount,
+      hidden: createOfferDto.hidden,
+    };
+    const offer = await this.offerRepository.create(offerData);
+    await this.wishService.updateRaised(+createOfferDto.item, newRaised);
+
+    return this.offerRepository.save(offer);
   }
 
-  findById(id: number): Promise<Offer> {
-    return this.offerRepository.findOneBy({ id });
+  async findMany() {
+    const offers = await this.offerRepository
+      .createQueryBuilder('offer')
+      .leftJoinAndSelect('offer.item', 'wish')
+      .leftJoinAndSelect('wish.owner', 'owner')
+      .leftJoinAndSelect('offer.user', 'user')
+      .leftJoinAndSelect('user.wishes', 'wishes')
+      .leftJoinAndSelect('user.offers', 'offers')
+      .leftJoinAndSelect('user.wishlists', 'wishlists')
+      .getMany();
+
+    return offers;
   }
 
-  removeById(id: number) {
-    return this.offerRepository.delete({ id });
+  async findOne(id: number) {
+    const offer = await this.offerRepository
+      .createQueryBuilder('offer')
+      .where({ id })
+      .innerJoinAndSelect('offer.item', 'item')
+      .leftJoinAndSelect('item.owner', 'owner')
+      .leftJoinAndSelect('offer.user', 'user')
+      .leftJoinAndSelect('user.wishes', 'wishes')
+      .leftJoinAndSelect('user.offers', 'offers')
+      .leftJoinAndSelect('user.wishlists', 'wishlists')
+      .getOne();
+    return offer;
   }
 
-  create(createOfferDto: CreateOfferDto): Promise<Offer> {
-    const { id, createdAt, updatedAt, user, item, amount, hidden } =
-      createOfferDto;
-    const newOffer = new Offer();
-    newOffer.id = id;
-    (newOffer.createdAt = createdAt),
-      (newOffer.updatedAt = updatedAt),
-      (newOffer.user = user),
-      (newOffer.item = item),
-      (newOffer.amount = amount),
-      (newOffer.hidden = hidden);
-    return this.offerRepository.save(newOffer);
-  }
-
-  updateById(id: number, updateOfferDto: UpdateOfferDto) {
-    const { createdAt, updatedAt, user, item, amount, hidden } = updateOfferDto;
-    const newOffer = new Offer();
-    newOffer.id = id;
-    (newOffer.createdAt = createdAt),
-      (newOffer.updatedAt = updatedAt),
-      (newOffer.user = user),
-      (newOffer.item = item),
-      (newOffer.amount = amount),
-      (newOffer.hidden = hidden);
-    return this.offerRepository.update({ id }, newOffer);
+  async checkUser(item, id) {
+    const itemOwnerId = await this.wishService.findOne(item);
+    return itemOwnerId.owner === id;
   }
 }

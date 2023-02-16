@@ -1,34 +1,103 @@
-import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Wishlist } from './entities/wishlist.entity';
+import { User } from '../users/entities/user.entity';
+import { WishesService } from 'src/wishes/wishes.service';
+import { Repository } from 'typeorm';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
-import { UpdateWishlistDto } from './dto/update-wishlist.dto';
+import { UpdateWishlistDto } from '../wishlists/dto/update-wishlist.dto';
+import { Wishlist } from './entities/wishlist.entity';
 
 @Injectable()
 export class WishlistsService {
   constructor(
     @InjectRepository(Wishlist)
-    private readonly wishlistRepository: Repository<Wishlist>,
+    private wishlishRepository: Repository<Wishlist>,
+    private wishService: WishesService,
   ) {}
 
-  findAll(): Promise<Wishlist[]> {
-    return this.wishlistRepository.find();
+  async create(createWishlistDto: CreateWishlistDto, owner: User) {
+    const wishes = await this.getWishesById(createWishlistDto.items);
+
+    const wishlistData = {
+      owner,
+      name: createWishlistDto.name,
+      image: createWishlistDto.image,
+      items: wishes,
+    };
+
+    const wishlist = this.wishlishRepository.create(wishlistData);
+
+    return this.wishlishRepository.save(wishlist);
+  }
+  async findOne(id: number) {
+    const wishlist = await this.wishlishRepository
+      .createQueryBuilder('wishlist')
+      .leftJoinAndSelect('wishlist.owner', 'owner')
+      .leftJoinAndSelect('wishlist.items', 'items')
+      .where('wishlist.id = :id', { id })
+      .getOne();
+
+    return wishlist;
+  }
+  async updateOne(
+    wishlistId: number,
+    updateWishlistDto: UpdateWishlistDto,
+    user: number,
+  ) {
+    const wish = await this.findOne(wishlistId);
+    if (wish.owner.id !== user) {
+      return null;
+    }
+    const wishes = await this.getWishesById(updateWishlistDto.items);
+
+    (wish.name = updateWishlistDto.name || wish.name),
+      (wish.image = updateWishlistDto.image || wish.image),
+      (wish.items = wishes || wish.items);
+
+    return this.wishlishRepository.save(wish);
+  }
+  async deleteOne(id: number, owner: number) {
+    const wishlist = await this.findOne(id);
+    if (!wishlist) {
+      throw new NotFoundException();
+    }
+    if (wishlist.owner.id !== owner) {
+      throw new Error('own');
+    }
+    await this.wishlishRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Wishlist)
+      .where('id = :id', { id })
+      .execute();
+
+    return wishlist;
   }
 
-  findById(id: number): Promise<Wishlist> {
-    return this.wishlistRepository.findOneBy({ id });
+  async findMany() {
+    const wishlists = this.wishlishRepository
+      .createQueryBuilder('wishlists')
+      .leftJoinAndSelect('wishlists.owner', 'owner')
+      .leftJoinAndSelect('wishlists.items', 'items')
+      .getMany();
+
+    return wishlists;
   }
 
-  removeById(id: number) {
-    return this.wishlistRepository.delete({ id });
-  }
+  async getWishesById(array: any[]) {
+    let resolvedWishes: any[] = [];
+    const wishes = array?.map(async (item) => {
+      const { owner, offers, ...wish } = await this.wishService.findOne(item);
+      return wish;
+    });
 
-  create(createWishDto: CreateWishlistDto): Promise<Wishlist> {
-    return this.wishlistRepository.save(createWishDto);
-  }
+    if (wishes) {
+      for (const asyncWish of wishes) {
+        const result = await asyncWish;
+        resolvedWishes.push(result);
+      }
+    }
 
-  updateById(id: number, updateWishDto: UpdateWishlistDto) {
-    return this.wishlistRepository.update({ id }, updateWishDto);
+    return resolvedWishes;
   }
 }

@@ -9,6 +9,7 @@ import {
   Max,
   IsArray,
 } from 'class-validator';
+import { User } from 'src/users/entities/user.entity';
 
 export class UpdateWishDto {
   @IsDefined()
@@ -38,7 +39,7 @@ export class UpdateWishDto {
   raised: number;
 
   @IsUrl()
-  owner: string;
+  owner: User;
 
   @IsNumber()
   @Min(1)

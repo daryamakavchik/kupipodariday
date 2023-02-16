@@ -36,12 +36,12 @@ export class Wish {
   @Column('numeric', { scale: 2 })
   raised: number;
 
-  @ManyToOne(() => User, (user) => user.username)
-  owner: string;
-
   @Column({ type: 'varchar' })
   @Length(1, 1024)
   description: number;
+
+  @ManyToOne(() => User, (user) => user.username)
+  owner: User;
 
   @OneToMany(() => Offer, (offer) => offer.item)
   offers: Offer[];

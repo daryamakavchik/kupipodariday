@@ -4,45 +4,84 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import RegisterDto from 'src/dto/register.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private usersRepository: Repository<User>,
   ) {}
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const hash = await bcrypt.hash(createUserDto.password, 10);
+
+    const createUserWithHashPassword: CreateUserDto = {
+      ...createUserDto,
+      password: hash,
+    };
+
+    const user = await this.usersRepository.create(createUserWithHashPassword);
+
+    return this.usersRepository.save(user);
   }
 
-  findOne(id: number): Promise<User> {
-    return this.userRepository.findOneBy({ id });
+  async findOne(id: number) {
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .where({ id })
+      .addSelect('user.email')
+      .getOne();
+
+    return user;
   }
 
-  findByEmail(email: string): Promise<User> {
-    return this.userRepository.findOneBy({ email });
+  async updateOne(id: number, updateUserDto: UpdateUserDto) {
+    if (updateUserDto.password) {
+      const hash = await bcrypt.hash(updateUserDto.password, 10);
+      updateUserDto.password = hash;
+    }
+
+    await this.usersRepository.update({ id }, updateUserDto);
+    const user = await this.findOne(id);
+    return user;
   }
 
-  findByUsername(username: string): Promise<User> {
-    return this.userRepository.findOneBy({ username });
+  async findByUsername(username: string) {
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.wishes', 'wish')
+      .where({ username })
+      .addSelect('user.password')
+      .addSelect('user.email')
+      .getOne();
+    return user;
   }
 
-  removeById(id: number) {
-    return this.userRepository.delete({ id });
+  async getWishes(username: string) {
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.wishes', 'wish')
+      .leftJoinAndSelect('wish.owner', 'owner')
+      .leftJoinAndSelect('wish.offers', 'offers')
+      .leftJoinAndSelect('offers.user', 'item')
+      .leftJoinAndSelect('item.wishlists', 'wishlists')
+      .leftJoinAndSelect('wishlists.items', 'items')
+      .leftJoinAndSelect('wishlists.owner', 'owners')
+      .where({ username })
+      .getOne();
+    const { wishes } = user;
+    return wishes;
   }
 
-  register(registerDto: RegisterDto): Promise<User> {
-    return this.userRepository.save(registerDto);
-  }
+  async findMany(query: any) {
+    const users = await this.usersRepository
+      .createQueryBuilder('user')
+      .where('user.username = :username', { username: query })
+      .orWhere('user.email = :email', { email: query })
+      .addSelect('user.email')
+      .getMany();
 
-  create(createUserDto: CreateUserDto) {
-    const user = this.userRepository.create(createUserDto);
-    return this.userRepository.save(user);
-  }
-
-  updateById(id: number, updateUserDto: UpdateUserDto) {
-    return this.userRepository.update({ id }, updateUserDto);
+    return users;
   }
 }
