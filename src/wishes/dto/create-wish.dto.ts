@@ -39,7 +39,6 @@ export class CreateWishDto {
   @IsNumber()
   raised: number;
 
-  @IsUrl()
   owner: User;
 
   @IsNumber()

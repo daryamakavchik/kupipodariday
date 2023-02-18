@@ -37,7 +37,7 @@ export class UsersController {
 
   @Get(':username')
   async getUserByUsername(@Param('username') username: any) {
-    const user = await this.usersService.findByUsername(username);
+    const user = await this.usersService.findMany(username);
     return user;
   }
 

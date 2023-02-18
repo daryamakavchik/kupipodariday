@@ -37,8 +37,7 @@ export class UpdateWishDto {
 
   @IsNumber()
   raised: number;
-
-  @IsUrl()
+  
   owner: User;
 
   @IsNumber()

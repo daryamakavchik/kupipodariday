@@ -30,15 +30,10 @@ export class WishlistsService {
     return this.wishlishRepository.save(wishlist);
   }
   async findOne(id: number) {
-    const wishlist = await this.wishlishRepository
-      .createQueryBuilder('wishlist')
-      .leftJoinAndSelect('wishlist.owner', 'owner')
-      .leftJoinAndSelect('wishlist.items', 'items')
-      .where('wishlist.id = :id', { id })
-      .getOne();
-
+    const wishlist = await this.wishlishRepository.findOne({ where: { id }});
     return wishlist;
   }
+
   async updateOne(
     wishlistId: number,
     updateWishlistDto: UpdateWishlistDto,
@@ -56,6 +51,7 @@ export class WishlistsService {
 
     return this.wishlishRepository.save(wish);
   }
+
   async deleteOne(id: number, owner: number) {
     const wishlist = await this.findOne(id);
     if (!wishlist) {
@@ -75,12 +71,7 @@ export class WishlistsService {
   }
 
   async findMany() {
-    const wishlists = this.wishlishRepository
-      .createQueryBuilder('wishlists')
-      .leftJoinAndSelect('wishlists.owner', 'owner')
-      .leftJoinAndSelect('wishlists.items', 'items')
-      .getMany();
-
+    const wishlists = this.wishlishRepository.find();
     return wishlists;
   }
 

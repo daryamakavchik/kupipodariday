@@ -23,16 +23,7 @@ export class WishesService {
   }
 
   async findOne(id: number) {
-    const wish = await this.wishRepository
-      .createQueryBuilder("wish")
-      .leftJoinAndSelect("wish.owner", "owner")
-      .leftJoinAndSelect("wish.offers", "offers")
-      .leftJoinAndSelect("offers.user", "user")
-      .leftJoinAndSelect("user.wishes", "wishes")
-      .leftJoinAndSelect("user.offers", "offer")
-      .leftJoinAndSelect("user.wishlists", "wishlists")
-      .where({ id })
-      .getOne();
+    const wish = await this.wishRepository.findOne({ where: { id }});
     return wish;
   }
 

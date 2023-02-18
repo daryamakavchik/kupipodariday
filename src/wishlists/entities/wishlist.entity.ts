@@ -18,7 +18,7 @@ export class Wishlist {
   @Length(1, 250)
   name: string;
 
-  @ManyToOne(() => User, (user) => user.wishlists)
+  @ManyToOne(() => User, (user) => user.id)
   owner: User;
 
   @Column({ type: 'varchar' })

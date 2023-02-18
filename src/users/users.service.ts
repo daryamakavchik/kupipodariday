@@ -1,11 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { Repository, Like } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import * as bcrypt from "bcrypt";
-import { Req } from "@nestjs/common";
 
 @Injectable()
 export class UsersService {
@@ -52,5 +51,16 @@ export class UsersService {
     const user = await this.findByUsername(username);
     const { wishes } = user;
     return wishes;
+  }
+
+
+  async findMany(query: any) {
+    const users = await this.usersRepository.find({
+      where: [
+        { username : Like(query) },
+        { email: Like(query) }
+      ]
+    })
+    return users;
   }
 }

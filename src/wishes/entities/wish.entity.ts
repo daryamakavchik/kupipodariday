@@ -40,7 +40,7 @@ export class Wish {
   @Length(1, 1024)
   description: number;
 
-  @ManyToOne(() => User, (user) => user.username)
+  @ManyToOne(() => User, (user) => user.id)
   owner: User;
 
   @OneToMany(() => Offer, (offer) => offer.item)

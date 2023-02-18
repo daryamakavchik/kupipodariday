@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsArray,
 } from 'class-validator';
+import { User } from 'src/users/entities/user.entity';
 
 export class UpdateWishlistDto {
   @IsDefined()
@@ -29,6 +30,8 @@ export class UpdateWishlistDto {
 
   @IsUrl()
   image: string;
+
+  owner: User;
 
   @IsArray()
   items: [];
