@@ -12,9 +12,9 @@ exports.default = (0, config_1.registerAs)('database', () => {
         type: 'postgres',
         host: process.env.POSTGRES_HOST,
         port: parseInt(process.env.POSTGRES_PORT),
-        username: process.env.POSTGRES_USER,
-        password: process.env.POSTGRES_PASSWORD,
-        database: process.env.POSTGRES_DB,
+        username: 'student',
+        password: 'student',
+        database: 'kupipodariday',
         entities: [user_entity_1.User, offer_entity_1.Offer, wish_entity_1.Wish, wishlist_entity_1.Wishlist],
         synchronize: true,
     };

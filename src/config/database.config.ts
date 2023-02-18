@@ -12,9 +12,9 @@ export default registerAs('database', () => {
     type: 'postgres',
     host: process.env.POSTGRES_HOST,
     port: parseInt(process.env.POSTGRES_PORT),
-    username: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DB,
+    username: 'student',
+    password: 'student',
+    database: 'kupipodariday',
     entities: [User, Offer, Wish, Wishlist],
     synchronize: true,
   };
