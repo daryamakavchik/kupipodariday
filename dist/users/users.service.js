@@ -16,25 +16,48 @@ exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("@nestjs/typeorm");
-const user_entity_1 = require("../entities/user.entity");
+const user_entity_1 = require("./entities/user.entity");
+const bcrypt = require("bcrypt");
 let UsersService = class UsersService {
-    constructor(userRepository) {
-        this.userRepository = userRepository;
+    constructor(usersRepository) {
+        this.usersRepository = usersRepository;
     }
-    findAll() {
-        return this.userRepository.find();
+    async create(createUserDto) {
+        const hash = await bcrypt.hash(createUserDto.password, 10);
+        const createUserWithHashPassword = Object.assign(Object.assign({}, createUserDto), { password: hash });
+        const user = await this.usersRepository.create(createUserWithHashPassword);
+        return this.usersRepository.save(user);
     }
-    findById(id) {
-        return this.userRepository.findOneBy({ id });
+    async findOne(id) {
+        const user = await this.usersRepository.findOne({ where: { id } });
+        return user;
     }
-    removeById(id) {
-        return this.userRepository.delete({ id });
+    async findByUsername(username) {
+        const user = await this.usersRepository.findOneBy({ username });
+        return user;
     }
-    create(createUserDto) {
-        return this.userRepository.save(createUserDto);
+    async updateOne(id, updateUserDto) {
+        if (updateUserDto.password) {
+            const hash = await bcrypt.hash(updateUserDto.password, 10);
+            updateUserDto.password = hash;
+        }
+        await this.usersRepository.update({ id }, updateUserDto);
+        const user = await this.findOne(id);
+        return user;
     }
-    updateById(id, updateUserDto) {
-        return this.userRepository.update({ id }, updateUserDto);
+    async getWishes(username) {
+        const user = await this.findByUsername(username);
+        const { wishes } = user;
+        return wishes;
+    }
+    async findMany(query) {
+        const users = await this.usersRepository.find({
+            where: [
+                { username: (0, typeorm_1.Like)(query) },
+                { email: (0, typeorm_1.Like)(query) }
+            ]
+        });
+        return users;
     }
 };
 UsersService = __decorate([

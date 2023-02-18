@@ -14,33 +14,53 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OffersService = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("typeorm");
-const typeorm_2 = require("@nestjs/typeorm");
-const offer_entity_1 = require("../entities/offer.entity");
+const typeorm_1 = require("@nestjs/typeorm");
+const offer_entity_1 = require("../offers/entities/offer.entity");
+const typeorm_2 = require("typeorm");
+const wishes_service_1 = require("../wishes/wishes.service");
 let OffersService = class OffersService {
-    constructor(offerRepository) {
+    constructor(offerRepository, wishService) {
         this.offerRepository = offerRepository;
+        this.wishService = wishService;
     }
-    findAll() {
-        return this.offerRepository.find();
+    async create(createOfferDto, user) {
+        const checkUser = await this.checkUser(createOfferDto.item, user);
+        if (checkUser) {
+            throw new Error('own offer');
+        }
+        const { price, raised } = await this.wishService.getRaised(+createOfferDto.item);
+        const newRaised = raised + createOfferDto.amount;
+        if (price < newRaised) {
+            throw new Error('too much');
+        }
+        const offerData = {
+            user,
+            item: createOfferDto.item,
+            amount: createOfferDto.amount,
+            hidden: createOfferDto.hidden,
+        };
+        const offer = await this.offerRepository.create(offerData);
+        await this.wishService.updateRaised(+createOfferDto.item, newRaised);
+        return this.offerRepository.save(offer);
     }
-    findById(id) {
-        return this.offerRepository.findOneBy({ id });
+    async findMany() {
+        const offers = await this.offerRepository.find();
+        return offers;
     }
-    removeById(id) {
-        return this.offerRepository.delete({ id });
+    async findOne(id) {
+        const offer = await this.offerRepository.findOne({ where: { id } });
+        return offer;
     }
-    create(createOfferDto) {
-        return this.offerRepository.save(createOfferDto);
-    }
-    updateById(id, updateOfferDto) {
-        return this.offerRepository.update({ id }, updateOfferDto);
+    async checkUser(item, id) {
+        const itemOwnerId = await this.wishService.findOne(item);
+        return itemOwnerId.owner === id;
     }
 };
 OffersService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_2.InjectRepository)(offer_entity_1.Offer)),
-    __metadata("design:paramtypes", [typeorm_1.Repository])
+    __param(0, (0, typeorm_1.InjectRepository)(offer_entity_1.Offer)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        wishes_service_1.WishesService])
 ], OffersService);
 exports.OffersService = OffersService;
 //# sourceMappingURL=offers.service.js.map

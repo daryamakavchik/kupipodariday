@@ -11,7 +11,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const wishes_controller_1 = require("./wishes.controller");
 const wishes_service_1 = require("./wishes.service");
-const wish_entity_1 = require("../entities/wish.entity");
+const wish_entity_1 = require("./entities/wish.entity");
 let WishesModule = class WishesModule {
 };
 WishesModule = __decorate([

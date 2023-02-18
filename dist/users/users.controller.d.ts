@@ -1,12 +1,11 @@
-import { User } from '../entities/user.entity';
-import { UsersService } from '../users/users.service';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
+import { UsersService } from './users.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 export declare class UsersController {
     private usersService;
     constructor(usersService: UsersService);
-    findAll(): Promise<User[]>;
-    create(user: CreateUserDto): Promise<User>;
-    removeById(id: number): Promise<void>;
-    updateById(id: number, updateUserDto: UpdateUserDto): Promise<import("typeorm").UpdateResult>;
+    getMe(req: any): any;
+    updateMe(req: any, updateUserDto: UpdateUserDto): Promise<import("./entities/user.entity").User>;
+    getWishes(req: any): Promise<import("../wishes/entities/wish.entity").Wish[]>;
+    getUserByUsername(username: any): Promise<import("./entities/user.entity").User[]>;
+    getWishesByUsername(username: string): Promise<import("../wishes/entities/wish.entity").Wish[]>;
 }

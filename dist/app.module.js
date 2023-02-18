@@ -9,26 +9,51 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const offer_entity_1 = require("./entities/offer.entity");
-const user_entity_1 = require("./entities/user.entity");
-const wish_entity_1 = require("./entities/wish.entity");
-const wishlist_entity_1 = require("./entities/wishlist.entity");
+const app_controller_1 = require("./app.controller");
+const users_module_1 = require("./users/users.module");
+const wishes_module_1 = require("./wishes/wishes.module");
+const wishlists_module_1 = require("./wishlists/wishlists.module");
+const offers_module_1 = require("./offers/offers.module");
+const auth_module_1 = require("./auth/auth.module");
+const config_1 = require("@nestjs/config");
+const nest_winston_1 = require("nest-winston");
+const winston = require("winston");
+const database_config_1 = require("./config/database.config");
+const app_service_1 = require("./app.service");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'postgres',
-                host: 'localhost',
-                port: 5432,
-                username: 'student',
-                password: 'student',
-                database: 'kupipodariday',
-                entities: [user_entity_1.User, offer_entity_1.Offer, wish_entity_1.Wish, wishlist_entity_1.Wishlist],
-                synchronize: true,
+            nest_winston_1.WinstonModule.forRoot({
+                levels: {
+                    critical_error: 0,
+                    error: 1,
+                    special_warning: 2,
+                    another_log_level: 3,
+                    info: 4,
+                },
+                transports: [
+                    new winston.transports.Console({ format: winston.format.simple() }),
+                    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+                ],
             }),
+            config_1.ConfigModule.forRoot({
+                isGlobal: true,
+                load: [database_config_1.default],
+            }),
+            typeorm_1.TypeOrmModule.forRootAsync({
+                inject: [config_1.ConfigService],
+                useFactory: async (configService) => (Object.assign({}, configService.get('database')))
+            }),
+            users_module_1.UsersModule,
+            wishes_module_1.WishesModule,
+            wishlists_module_1.WishlistsModule,
+            offers_module_1.OffersModule,
+            auth_module_1.AuthModule,
         ],
+        controllers: [app_controller_1.AppController],
+        providers: [app_service_1.AppService],
     })
 ], AppModule);
 exports.AppModule = AppModule;

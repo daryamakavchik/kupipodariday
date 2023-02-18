@@ -1,13 +1,13 @@
+import { Offer } from '../offers/entities/offer.entity';
 import { Repository } from 'typeorm';
-import { Offer } from '../entities/offer.entity';
-import { CreateOfferDto } from '../dto/create-offer.dto';
-import { UpdateOfferDto } from '../dto/update-offer.dto';
+import { CreateOfferDto } from './dto/create-offer.dto';
+import { WishesService } from 'src/wishes/wishes.service';
 export declare class OffersService {
-    private readonly offerRepository;
-    constructor(offerRepository: Repository<Offer>);
-    findAll(): Promise<Offer[]>;
-    findById(id: number): Promise<Offer>;
-    removeById(id: number): Promise<import("typeorm").DeleteResult>;
-    create(createOfferDto: CreateOfferDto): Promise<Offer>;
-    updateById(id: number, updateOfferDto: UpdateOfferDto): Promise<import("typeorm").UpdateResult>;
+    private offerRepository;
+    private wishService;
+    constructor(offerRepository: Repository<Offer>, wishService: WishesService);
+    create(createOfferDto: CreateOfferDto, user: any): Promise<Offer>;
+    findMany(): Promise<Offer[]>;
+    findOne(id: number): Promise<Offer>;
+    checkUser(item: any, id: any): Promise<boolean>;
 }

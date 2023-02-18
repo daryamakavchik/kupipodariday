@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import dbConfig from './config/database.config';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import dbConfig from './config/database.config';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [AppService],
 })
 
 export class AppModule {} 

@@ -13,64 +13,71 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
-const users_service_1 = require("../users/users.service");
 const common_1 = require("@nestjs/common");
-const create_user_dto_1 = require("../dto/create-user.dto");
-const update_user_dto_1 = require("../dto/update-user.dto");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const users_service_1 = require("./users.service");
+const update_user_dto_1 = require("./dto/update-user.dto");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
-    findAll() {
-        return this.usersService.findAll();
+    getMe(req) {
+        return req.user;
     }
-    create(user) {
-        return this.usersService.create(user);
+    async updateMe(req, updateUserDto) {
+        return this.usersService.updateOne(req.user.id, updateUserDto);
     }
-    async removeById(id) {
-        const user = await this.usersService.findById(id);
-        if (!user) {
-            throw new common_1.NotFoundException();
-        }
-        await this.usersService.removeById(id);
+    async getWishes(req) {
+        const wishes = await this.usersService.getWishes(req.user.username);
+        return wishes;
     }
-    async updateById(id, updateUserDto) {
-        const user = await this.usersService.findById(id);
-        if (!user) {
-            throw new common_1.NotFoundException('message');
-        }
-        return this.usersService.updateById(id, updateUserDto);
+    async getUserByUsername(username) {
+        const user = await this.usersService.findMany(username);
+        return user;
+    }
+    async getWishesByUsername(username) {
+        const wishes = await this.usersService.getWishes(username);
+        return wishes;
     }
 };
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)('me'),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
-], UsersController.prototype, "create", null);
+], UsersController.prototype, "getMe", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "removeById", null);
-__decorate([
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    (0, common_1.Patch)('me'),
+    __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, update_user_dto_1.UpdateUserDto]),
+    __metadata("design:paramtypes", [Object, update_user_dto_1.UpdateUserDto]),
     __metadata("design:returntype", Promise)
-], UsersController.prototype, "updateById", null);
+], UsersController.prototype, "updateMe", null);
+__decorate([
+    (0, common_1.Get)('me/wishes'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getWishes", null);
+__decorate([
+    (0, common_1.Get)(':username'),
+    __param(0, (0, common_1.Param)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUserByUsername", null);
+__decorate([
+    (0, common_1.Get)(':username/wishes'),
+    __param(0, (0, common_1.Param)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getWishesByUsername", null);
 UsersController = __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);
