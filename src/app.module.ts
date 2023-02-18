@@ -7,10 +7,25 @@ import { WishlistsModule } from './wishlists/wishlists.module';
 import { OffersModule } from './offers/offers.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
 import dbConfig from './config/database.config';
 
 @Module({
   imports: [
+    WinstonModule.forRoot({
+      levels: {
+        critical_error: 0,
+        error: 1,
+        special_warning: 2,
+        another_log_level: 3,
+        info: 4,
+      },
+      transports: [
+        new winston.transports.Console({ format: winston.format.simple() }),
+        new winston.transports.File({ filename: 'error.log', level: 'error' }),
+      ],
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [dbConfig],
@@ -28,4 +43,5 @@ import dbConfig from './config/database.config';
   controllers: [AppController],
   providers: [],
 })
-export class AppModule {}
+
+export class AppModule {} 
