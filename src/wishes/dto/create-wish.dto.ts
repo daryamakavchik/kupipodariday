@@ -13,42 +13,23 @@ import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
 
 export class CreateWishDto {
-  @IsDefined()
-  @IsNumber()
-  id: number;
-
-  @IsDate()
-  createdAt: Date;
-
-  @IsDate()
-  updatedAt: Date;
-
   @IsString()
-  @Length(1, 250)
+  @IsNotEmpty()
   name: string;
 
   @IsUrl()
+  @IsNotEmpty()
   link: string;
 
-  @IsUrl() //validate URL
+  @IsUrl()
   image: string;
 
-  @IsNumber()
+  @IsInt()
+  @IsNotEmpty()
   price: number;
 
-  @IsNumber()
-  raised: number;
-
-  owner: User;
-
-  @IsNumber()
-  @Min(1)
-  @Max(1024)
-  description: number;
-
-  @IsArray()
-  offers: Offer[];
-
-  @IsNumber()
-  copied: number;
+  @IsString()
+  @MinLength(1)
+  @MaxLength(1024)
+  description: string;
 }

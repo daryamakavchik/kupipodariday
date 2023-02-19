@@ -9,8 +9,8 @@ export declare class Wish {
     image: string;
     price: number;
     raised: number;
-    description: number;
-    owner: User;
+    description: string;
     offers: Offer[];
+    owner: User;
     copied: number;
 }

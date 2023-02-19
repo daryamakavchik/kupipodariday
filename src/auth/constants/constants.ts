@@ -1,7 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config();
-
-export const jwtConstants = {
+export const jwtConstant = {
   secret: 'some-super-secret-key'
-  //process.env.JWT_SECRET,
 };

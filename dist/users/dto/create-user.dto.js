@@ -15,29 +15,11 @@ class CreateUserDto {
 }
 __decorate([
     (0, class_validator_1.IsDefined)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], CreateUserDto.prototype, "id", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], CreateUserDto.prototype, "createdAt", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], CreateUserDto.prototype, "updatedAt", void 0);
-__decorate([
-    (0, class_validator_1.IsDefined)(),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.Length)(2, 30),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "username", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(2, 200),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "about", void 0);
 __decorate([
     (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
@@ -48,20 +30,8 @@ __decorate([
 ], CreateUserDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsStrongPassword)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.IsArray)(),
-    __metadata("design:type", Array)
-], CreateUserDto.prototype, "wishes", void 0);
-__decorate([
-    (0, class_validator_1.IsArray)(),
-    __metadata("design:type", Array)
-], CreateUserDto.prototype, "offers", void 0);
-__decorate([
-    (0, class_validator_1.IsArray)(),
-    __metadata("design:type", Array)
-], CreateUserDto.prototype, "wishlists", void 0);
 exports.CreateUserDto = CreateUserDto;
 //# sourceMappingURL=create-user.dto.js.map

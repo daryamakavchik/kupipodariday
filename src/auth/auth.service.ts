@@ -13,7 +13,7 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  auth(user: User) {
+  login(user: User) {
     const payload = { sub: user.id };
 
     return { access_token: this.jwtService.sign(payload) };
@@ -26,7 +26,6 @@ export class AuthService {
 
     if (user && isMatch) {
       const { password, ...result } = user;
-
       return result;
     }
 

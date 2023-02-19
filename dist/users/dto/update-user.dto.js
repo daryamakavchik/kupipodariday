@@ -14,28 +14,15 @@ const class_validator_1 = require("class-validator");
 class UpdateUserDto {
 }
 __decorate([
-    (0, class_validator_1.IsDefined)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], UpdateUserDto.prototype, "id", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], UpdateUserDto.prototype, "createdAt", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], UpdateUserDto.prototype, "updatedAt", void 0);
-__decorate([
-    (0, class_validator_1.IsDefined)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.Length)(2, 30),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(2),
+    (0, class_validator_1.MaxLength)(30),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "username", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(2, 200),
+    (0, class_validator_1.MinLength)(2),
+    (0, class_validator_1.MaxLength)(200),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "about", void 0);
 __decorate([
@@ -48,20 +35,7 @@ __decorate([
 ], UpdateUserDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsStrongPassword)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.IsArray)(),
-    __metadata("design:type", Array)
-], UpdateUserDto.prototype, "wishes", void 0);
-__decorate([
-    (0, class_validator_1.IsArray)(),
-    __metadata("design:type", Array)
-], UpdateUserDto.prototype, "offers", void 0);
-__decorate([
-    (0, class_validator_1.IsArray)(),
-    __metadata("design:type", Array)
-], UpdateUserDto.prototype, "wishlists", void 0);
 exports.UpdateUserDto = UpdateUserDto;
 //# sourceMappingURL=update-user.dto.js.map

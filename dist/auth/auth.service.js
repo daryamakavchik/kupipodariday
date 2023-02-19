@@ -32,7 +32,7 @@ let AuthService = class AuthService {
         this.usersService = usersService;
         this.configService = configService;
     }
-    auth(user) {
+    login(user) {
         const payload = { sub: user.id };
         return { access_token: this.jwtService.sign(payload) };
     }

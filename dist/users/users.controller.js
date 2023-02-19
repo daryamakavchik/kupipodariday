@@ -21,6 +21,9 @@ let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
+    getAll() {
+        return this.usersService.findAll();
+    }
     getMe(req) {
         return req.user;
     }
@@ -40,6 +43,12 @@ let UsersController = class UsersController {
         return wishes;
     }
 };
+__decorate([
+    (0, common_1.Get)(''),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getAll", null);
 __decorate([
     (0, common_1.Get)('me'),
     __param(0, (0, common_1.Req)()),
@@ -66,7 +75,7 @@ __decorate([
     (0, common_1.Get)(':username'),
     __param(0, (0, common_1.Param)('username')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getUserByUsername", null);
 __decorate([

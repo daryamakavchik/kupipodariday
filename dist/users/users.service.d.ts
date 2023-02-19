@@ -7,8 +7,9 @@ export declare class UsersService {
     constructor(usersRepository: Repository<User>);
     create(createUserDto: CreateUserDto): Promise<User>;
     findOne(id: number): Promise<User>;
+    findAll(): Promise<User[]>;
     findByUsername(username: string): Promise<User>;
     updateOne(id: number, updateUserDto: UpdateUserDto): Promise<User>;
     getWishes(username: any): Promise<import("../wishes/entities/wish.entity").Wish[]>;
-    findMany(query: any): Promise<User[]>;
+    findMany(query: string): Promise<User[]>;
 }

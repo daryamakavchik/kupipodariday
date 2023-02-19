@@ -11,7 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Offer = void 0;
 const typeorm_1 = require("typeorm");
+const class_validator_1 = require("class-validator");
 const user_entity_1 = require("../../users/entities/user.entity");
+const wish_entity_1 = require("../../wishes/entities/wish.entity");
 let Offer = class Offer {
 };
 __decorate([
@@ -19,29 +21,33 @@ __decorate([
     __metadata("design:type", Number)
 ], Offer.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Offer.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Offer.prototype, "updatedAt", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.id),
-    __metadata("design:type", Number)
-], Offer.prototype, "user", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
+    (0, typeorm_1.ManyToOne)(() => wish_entity_1.Wish, (wish) => wish.offers),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", Object)
 ], Offer.prototype, "item", void 0);
 __decorate([
-    (0, typeorm_1.Column)('numeric', { scale: 2 }),
+    (0, typeorm_1.Column)({ select: true }),
+    (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
 ], Offer.prototype, "amount", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: false }),
+    (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], Offer.prototype, "hidden", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.id),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", user_entity_1.User)
+], Offer.prototype, "user", void 0);
 Offer = __decorate([
     (0, typeorm_1.Entity)()
 ], Offer);

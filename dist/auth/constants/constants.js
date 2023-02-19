@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jwtConstants = void 0;
-require('dotenv').config();
-exports.jwtConstants = {
+exports.jwtConstant = void 0;
+exports.jwtConstant = {
     secret: 'some-super-secret-key'
 };
 //# sourceMappingURL=constants.js.map

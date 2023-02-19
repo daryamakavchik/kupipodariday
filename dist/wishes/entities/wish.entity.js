@@ -21,49 +21,53 @@ __decorate([
     __metadata("design:type", Number)
 ], Wish.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Wish.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Wish.prototype, "updatedAt", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
-    (0, class_validator_1.Length)(1, 250),
+    (0, class_validator_1.Max)(250),
     __metadata("design:type", String)
 ], Wish.prototype, "name", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
+    (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
 ], Wish.prototype, "link", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
+    (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
 ], Wish.prototype, "image", void 0);
 __decorate([
-    (0, typeorm_1.Column)('numeric', { scale: 2 }),
+    (0, typeorm_1.Column)(),
+    (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
 ], Wish.prototype, "price", void 0);
 __decorate([
-    (0, typeorm_1.Column)('numeric', { scale: 2 }),
+    (0, typeorm_1.Column)({ default: 0 }),
     __metadata("design:type", Number)
 ], Wish.prototype, "raised", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar' }),
+    (0, typeorm_1.Column)(),
     (0, class_validator_1.Length)(1, 1024),
-    __metadata("design:type", Number)
+    __metadata("design:type", String)
 ], Wish.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.id),
-    __metadata("design:type", user_entity_1.User)
-], Wish.prototype, "owner", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => offer_entity_1.Offer, (offer) => offer.item),
+    (0, typeorm_1.OneToMany)(() => offer_entity_1.Offer, (offer) => offer.item, { cascade: true, eager: true }),
     __metadata("design:type", Array)
 ], Wish.prototype, "offers", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", user_entity_1.User)
+], Wish.prototype, "owner", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
     __metadata("design:type", Number)
 ], Wish.prototype, "copied", void 0);
 Wish = __decorate([

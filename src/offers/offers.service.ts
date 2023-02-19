@@ -14,14 +14,14 @@ export class OffersService {
   ) {}
 
   async create(createOfferDto: CreateOfferDto, user: any) {
-    const checkUser = await this.checkUser(createOfferDto.item, user);
+    const checkUser = await this.checkUser(createOfferDto.id, user);
 
     if (checkUser) {
       throw new Error('own offer');
     }
 
     const { price, raised } = await this.wishService.getRaised(
-      +createOfferDto.item,
+      createOfferDto.id,
     );
 
     const newRaised = raised + createOfferDto.amount;
@@ -31,12 +31,12 @@ export class OffersService {
 
     const offerData = {
       user,
-      item: createOfferDto.item,
+      item: createOfferDto.id,
       amount: createOfferDto.amount,
       hidden: createOfferDto.hidden,
     };
     const offer = await this.offerRepository.create(offerData);
-    await this.wishService.updateRaised(+createOfferDto.item, newRaised);
+    await this.wishService.updateRaised(createOfferDto.id, newRaised);
 
     return this.offerRepository.save(offer);
   }

@@ -9,7 +9,7 @@ declare const _default: (() => {
     username: string;
     password: string;
     database: string;
-    entities: (typeof Offer | typeof User | typeof Wish | typeof Wishlist)[];
+    entities: (typeof Offer | typeof Wish | typeof User | typeof Wishlist)[];
     synchronize: boolean;
 }) & import("@nestjs/config").ConfigFactoryKeyHost<{
     type: string;
@@ -18,7 +18,7 @@ declare const _default: (() => {
     username: string;
     password: string;
     database: string;
-    entities: (typeof Offer | typeof User | typeof Wish | typeof Wishlist)[];
+    entities: (typeof Offer | typeof Wish | typeof User | typeof Wishlist)[];
     synchronize: boolean;
 }>;
 export default _default;

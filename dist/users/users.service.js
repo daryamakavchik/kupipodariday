@@ -29,11 +29,25 @@ let UsersService = class UsersService {
         return this.usersRepository.save(user);
     }
     async findOne(id) {
-        const user = await this.usersRepository.findOne({ where: { id } });
+        const user = await this.usersRepository
+            .createQueryBuilder('user')
+            .where({ id })
+            .addSelect('user.email')
+            .getOne();
         return user;
     }
+    async findAll() {
+        const users = await this.usersRepository.find();
+        return users;
+    }
     async findByUsername(username) {
-        const user = await this.usersRepository.findOneBy({ username });
+        const user = await this.usersRepository
+            .createQueryBuilder('user')
+            .leftJoinAndSelect('user.wishes', 'wish')
+            .where({ username })
+            .addSelect('user.password')
+            .addSelect('user.email')
+            .getOne();
         return user;
     }
     async updateOne(id, updateUserDto) {

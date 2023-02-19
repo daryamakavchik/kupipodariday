@@ -10,7 +10,7 @@ export declare class CreateWishDto {
     price: number;
     raised: number;
     owner: User;
-    description: number;
+    description: string;
     offers: Offer[];
     copied: number;
 }

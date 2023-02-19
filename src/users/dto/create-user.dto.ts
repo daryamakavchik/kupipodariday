@@ -12,15 +12,15 @@ import {
 } from 'class-validator';
 
 export class CreateUserDto {
-  @IsDefined()
-  @IsNumber()
-  id: number;
+  // @IsDefined()
+  // @IsNumber()
+  // id: number;
 
-  @IsDate()
-  createdAt: Date;
+  // @IsDate()
+  // createdAt: Date;
 
-  @IsDate()
-  updatedAt: Date;
+  // @IsDate()
+  // updatedAt: Date;
 
   @IsDefined()
   @IsNotEmpty()
@@ -28,9 +28,9 @@ export class CreateUserDto {
   @IsString()
   username: string;
 
-  @IsString()
-  @Length(2, 200)
-  about: string;
+  // @IsString()
+  // @Length(2, 200)
+  // about: string;
 
   @IsUrl()
   avatar: string;
@@ -39,15 +39,15 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
-  @IsStrongPassword()
+  @IsNotEmpty()
   password: string;
 
-  @IsArray()
-  wishes: [];
+  // @IsArray()
+  // wishes: [];
 
-  @IsArray()
-  offers: [];
+  // @IsArray()
+  // offers: [];
 
-  @IsArray()
-  wishlists: [];
+  // @IsArray()
+  // wishlists: [];
 }

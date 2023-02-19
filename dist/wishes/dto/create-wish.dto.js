@@ -48,10 +48,9 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateWishDto.prototype, "raised", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.Min)(1),
-    (0, class_validator_1.Max)(1024),
-    __metadata("design:type", Number)
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.Length)(1, 1024),
+    __metadata("design:type", String)
 ], CreateWishDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),

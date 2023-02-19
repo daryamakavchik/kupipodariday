@@ -24,11 +24,11 @@ let AuthController = class AuthController {
         this.authService = authService;
     }
     signin(req) {
-        return this.authService.auth(req.user);
+        return this.authService.login(req.user);
     }
     async signup(createUserDto) {
         const user = await this.usersService.create(createUserDto);
-        return this.authService.auth(user);
+        return this.authService.login(user);
     }
 };
 __decorate([

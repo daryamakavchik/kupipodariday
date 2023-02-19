@@ -1,33 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
-import { Length } from 'class-validator';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, ManyToMany, JoinColumn, JoinTable, UpdateDateColumn, CreateDateColumn } from 'typeorm';
+import { Length, Min, Max, IsUrl } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
 import { Wish } from '../../wishes/entities/wish.entity';
 
 @Entity()
-export class Wishlist {
+export  class Wishlist {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
+  @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ type: 'varchar' })
-  @Length(1, 250)
+  @Column()
+  @Min(1)
+  @Max(250)
   name: string;
 
-  @ManyToOne(() => User, (user) => user.id)
-  owner: User;
-
-  @Column({ type: 'varchar' })
-  @Length(1, 1500)
-  description: string;
-
   @Column()
+  @IsUrl()
   image: string;
 
-  @OneToMany(() => Wish, (wish) => wish.link)
-  items: Wish[];
+  @ManyToMany(() => Wish, (wish) => wish.id, { cascade: true })
+  @JoinTable()
+  items: any[];
+
+  @ManyToOne(() => User)
+  @JoinColumn()
+  owner: User;
 }

@@ -81,7 +81,7 @@ let WishlistsService = class WishlistsService {
         return wishlists;
     }
     async getWishesById(array) {
-        let resolvedWishes = [];
+        const resolvedWishes = [];
         const wishes = array === null || array === void 0 ? void 0 : array.map(async (item) => {
             const _a = await this.wishService.findOne(item), { owner, offers } = _a, wish = __rest(_a, ["owner", "offers"]);
             return wish;

@@ -9,7 +9,7 @@ export declare class UpdateWishDto {
     price: number;
     raised: number;
     owner: User;
-    description: number;
+    description: string;
     offers: [];
     copied: number;
 }

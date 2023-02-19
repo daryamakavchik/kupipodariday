@@ -9,45 +9,27 @@ import {
   IsStrongPassword,
   IsNumber,
   IsArray,
+  MinLength,
+  MaxLength
 } from 'class-validator';
 
 export class UpdateUserDto {
-  @IsDefined()
-  @IsNumber()
-  id: number;
-
-  @IsDate()
-  createdAt: Date;
-
-  @IsDate()
-  updatedAt: Date;
-
-  @IsDefined()
-  @IsNotEmpty()
-  @Length(2, 30)
   @IsString()
+  @MinLength(2)
+  @MaxLength(30)
   username: string;
 
   @IsString()
-  @Length(2, 200)
+  @MinLength(2)
+  @MaxLength(200)
   about: string;
 
   @IsUrl()
   avatar: string;
 
-  @IsEmail() //make unique
+  @IsEmail()
   email: string;
 
   @IsString()
-  @IsStrongPassword()
   password: string;
-
-  @IsArray()
-  wishes: [];
-
-  @IsArray()
-  offers: [];
-
-  @IsArray()
-  wishlists: [];
 }

@@ -1,3 +1,3 @@
-export declare const jwtConstants: {
+export declare const jwtConstant: {
     secret: string;
 };

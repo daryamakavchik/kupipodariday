@@ -22,52 +22,49 @@ __decorate([
     __metadata("design:type", Number)
 ], User.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], User.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], User.prototype, "updatedAt", void 0);
 __decorate([
-    (0, typeorm_1.Column)({
-        type: 'varchar',
-        unique: true,
-        nullable: false,
-    }),
-    (0, class_validator_1.Length)(2, 30),
+    (0, typeorm_1.Column)({ unique: true }),
+    (0, class_validator_1.Min)(2),
+    (0, class_validator_1.Max)(30),
     __metadata("design:type", String)
 ], User.prototype, "username", void 0);
 __decorate([
-    (0, typeorm_1.Column)({
-        type: 'varchar',
-        default: 'Пока ничего не рассказал о себе',
-    }),
-    (0, class_validator_1.Length)(2, 200),
+    (0, typeorm_1.Column)({ default: 'Пока ничего не рассказал о себе' }),
+    (0, class_validator_1.Min)(2),
+    (0, class_validator_1.Max)(200),
     __metadata("design:type", String)
 ], User.prototype, "about", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: 'https://i.pravatar.cc/300' }),
+    (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
 ], User.prototype, "avatar", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ unique: true }),
+    (0, typeorm_1.Column)({ unique: true, select: false }),
+    (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ select: false }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => wish_entity_1.Wish, (wish) => wish.name),
+    (0, typeorm_1.OneToMany)(() => wish_entity_1.Wish, (wish) => wish.owner),
     __metadata("design:type", Array)
 ], User.prototype, "wishes", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => offer_entity_1.Offer, (offer) => offer.item),
+    (0, typeorm_1.OneToMany)(() => offer_entity_1.Offer, (offer) => offer.user),
     __metadata("design:type", Array)
 ], User.prototype, "offers", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => wishlist_entity_1.Wishlist, (wishlist) => wishlist.name),
+    (0, typeorm_1.OneToMany)(() => wishlist_entity_1.Wishlist, (wishlist) => wishlist.owner),
     __metadata("design:type", Array)
 ], User.prototype, "wishlists", void 0);
 User = __decorate([

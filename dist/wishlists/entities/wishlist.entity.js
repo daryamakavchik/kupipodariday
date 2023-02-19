@@ -21,35 +21,34 @@ __decorate([
     __metadata("design:type", Number)
 ], Wishlist.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Wishlist.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
 ], Wishlist.prototype, "updatedAt", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar' }),
-    (0, class_validator_1.Length)(1, 250),
+    (0, typeorm_1.Column)(),
+    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Max)(250),
     __metadata("design:type", String)
 ], Wishlist.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.id),
-    __metadata("design:type", user_entity_1.User)
-], Wishlist.prototype, "owner", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'varchar' }),
-    (0, class_validator_1.Length)(1, 1500),
-    __metadata("design:type", String)
-], Wishlist.prototype, "description", void 0);
-__decorate([
     (0, typeorm_1.Column)(),
+    (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
 ], Wishlist.prototype, "image", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => wish_entity_1.Wish, (wish) => wish.link),
+    (0, typeorm_1.ManyToMany)(() => wish_entity_1.Wish, (wish) => wish.id, { cascade: true }),
+    (0, typeorm_1.JoinTable)(),
     __metadata("design:type", Array)
 ], Wishlist.prototype, "items", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", user_entity_1.User)
+], Wishlist.prototype, "owner", void 0);
 Wishlist = __decorate([
     (0, typeorm_1.Entity)()
 ], Wishlist);

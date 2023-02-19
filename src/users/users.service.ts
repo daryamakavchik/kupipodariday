@@ -27,12 +27,28 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.usersRepository.findOne({ where: { id }});
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .where({ id })
+      .addSelect('user.email')
+      .getOne();
+
     return user;
   }
 
-  async findByUsername(username: string): Promise<User> {
-    const user = await this.usersRepository.findOneBy({ username });
+  async findAll() {
+    const users = await this.usersRepository.find();
+    return users;
+  }
+
+  async findByUsername(username: string) {
+    const user = await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.wishes', 'wish')
+      .where({ username })
+      .addSelect('user.password')
+      .addSelect('user.email')
+      .getOne();
     return user;
   }
 
@@ -54,7 +70,7 @@ export class UsersService {
   }
 
 
-  async findMany(query: any) {
+  async findMany(query: string) {
     const users = await this.usersRepository.find({
       where: [
         { username : Like(query) },

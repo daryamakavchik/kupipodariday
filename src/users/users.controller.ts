@@ -5,12 +5,12 @@ import {
   UseGuards,
   Body,
   Patch,
-  Param,
-  Post,
+  Param
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FindUserDto } from './dto/find-user.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('users')
@@ -19,9 +19,14 @@ export class UsersController {
   private usersService: UsersService,
   ) {}
 
+  @Get('')
+  getAll() {
+    return this.usersService.findAll()
+  }
+
   @Get('me')
   getMe(@Req() req) {
-    return req.user;
+    return req.user
   }
 
   @Patch('me')
@@ -36,7 +41,7 @@ export class UsersController {
   }
 
   @Get(':username')
-  async getUserByUsername(@Param('username') username: any) {
+  async getUserByUsername(@Param('username') username: string) {
     const user = await this.usersService.findMany(username);
     return user;
   }
@@ -45,5 +50,12 @@ export class UsersController {
   async getWishesByUsername(@Param('username') username: string) {
     const wishes = await this.usersService.getWishes(username);
     return wishes;
+  }
+
+  @Post('find')
+  async findUser(@Body() findUserDto: FindUserDto) {
+    console.log(findUserDto);
+    const user = await this.usersService.findMany(findUserDto.query);
+    return user;
   }
 }

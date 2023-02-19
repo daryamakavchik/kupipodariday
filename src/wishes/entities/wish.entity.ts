@@ -4,48 +4,55 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn
 } from 'typeorm';
-import { Length } from 'class-validator';
+import { Length, Min, Max, IsUrl, IsInt } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 import { Offer } from '../../offers/entities/offer.entity';
 
 @Entity()
-export class Wish {
+export  class Wish {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Column()
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @Column()
-  @Length(1, 250)
+  @Max(250)
   name: string;
 
   @Column()
+  @IsUrl()
   link: string;
 
   @Column()
+  @IsUrl()
   image: string;
 
-  @Column('numeric', { scale: 2 })
+  @Column()
+  @IsInt()
   price: number;
 
-  @Column('numeric', { scale: 2 })
+  @Column({ default: 0 })
   raised: number;
 
-  @Column({ type: 'varchar' })
+  @Column()
   @Length(1, 1024)
-  description: number;
+  description: string;
 
-  @ManyToOne(() => User, (user) => user.id)
-  owner: User;
-
-  @OneToMany(() => Offer, (offer) => offer.item)
+  @OneToMany(() => Offer, (offer) => offer.item, { cascade: true, eager: true })
   offers: Offer[];
 
-  @Column()
+  @ManyToOne(() => User)
+  @JoinColumn()
+  owner: User;
+
+  @Column({ default: 0 })
   copied: number;
 }
