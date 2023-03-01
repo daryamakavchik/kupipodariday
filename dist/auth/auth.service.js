@@ -25,8 +25,8 @@ let AuthService = class AuthService {
         const payload = { sub: user.id };
         return { access_token: this.jwtService.sign(payload) };
     }
-    async validatePassword(username, password) {
-        const user = await this.userService.findByUsername(username);
+    async validatePassword(email, password) {
+        const user = await this.userService.findByEmail(email);
         if (!user) {
             throw new exception_constructor_1.ServerException(error_constants_1.ErrorCode.LoginOrPasswordIncorrect);
         }

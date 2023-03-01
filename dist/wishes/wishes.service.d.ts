@@ -21,11 +21,11 @@ export declare class WishesService {
     findTopWishes(): Promise<Wish[]>;
     findOne(id: number): Promise<Wish>;
     update(id: number, userId: number, updateWishDto: UpdateWishDto): Promise<{
-        name: string;
-        link: string;
-        image: string;
-        price: number;
-        description: string;
+        name?: string;
+        link?: string;
+        image?: string;
+        price?: number;
+        description?: string;
         id: number;
     } & Wish>;
     remove(id: number, userId: number): Promise<{}>;

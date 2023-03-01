@@ -1,5 +1,5 @@
 export declare class CreateWishlistDto {
     name: string;
     image: string;
-    itemsId: any[];
+    itemsId: number[];
 }

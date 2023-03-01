@@ -9,7 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WishlistsModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const wishes_module_1 = require("../wishes/wishes.module");
+const wish_entity_1 = require("../wishes/entities/wish.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 const wishlist_entity_1 = require("./entities/wishlist.entity");
 const wishlists_controller_1 = require("./wishlists.controller");
 const wishlists_service_1 = require("./wishlists.service");
@@ -17,7 +18,7 @@ let WishlistsModule = class WishlistsModule {
 };
 WishlistsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([wishlist_entity_1.Wishlist]), wishes_module_1.WishesModule],
+        imports: [typeorm_1.TypeOrmModule.forFeature([wishlist_entity_1.Wishlist, wish_entity_1.Wish, user_entity_1.User])],
         providers: [wishlists_service_1.WishlistsService],
         controllers: [wishlists_controller_1.WishlistsController],
         exports: [wishlists_service_1.WishlistsService],

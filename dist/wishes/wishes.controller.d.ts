@@ -16,11 +16,11 @@ export declare class WishesController {
     findTopWishes(): Promise<import("./entities/wish.entity").Wish[]>;
     findOne(id: string): Promise<import("./entities/wish.entity").Wish>;
     update(id: string, req: any, updateWishDto: UpdateWishDto): Promise<{
-        name: string;
-        link: string;
-        image: string;
-        price: number;
-        description: string;
+        name?: string;
+        link?: string;
+        image?: string;
+        price?: number;
+        description?: string;
         id: number;
     } & import("./entities/wish.entity").Wish>;
     remove(id: string, req: any): Promise<{}>;

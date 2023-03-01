@@ -16,76 +16,71 @@ exports.WishlistsController = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const create_wishlist_dto_1 = require("./dto/create-wishlist.dto");
+const update_wishlist_dto_1 = require("./dto/update-wishlist.dto");
 const wishlists_service_1 = require("./wishlists.service");
 let WishlistsController = class WishlistsController {
-    constructor(wishlistService) {
-        this.wishlistService = wishlistService;
+    constructor(wishlistsService) {
+        this.wishlistsService = wishlistsService;
     }
-    async getWishlists() {
-        const wishlists = this.wishlistService.findMany();
-        return wishlists;
+    create(req, createWishlistDto) {
+        const { user } = req;
+        return this.wishlistsService.create(user, createWishlistDto);
     }
-    async createWishlist(createWishlistDto, req) {
-        const wishlist = await this.wishlistService.create(createWishlistDto, req.user.id);
-        return wishlist;
+    findAll() {
+        return this.wishlistsService.findAll();
     }
-    async getWishlistById(id) {
-        const wishlist = await this.wishlistService.findOne(id);
-        return wishlist;
+    findOne(id) {
+        return this.wishlistsService.findOneById(Number(id));
     }
-    async updateWishlistById(id, Body, req) {
-        const wishlist = await this.wishlistService.updateOne(id, Body, req.user.id);
-        return wishlist;
+    update(id, req, updateWishlistDto) {
+        const userId = req.user.id;
+        return this.wishlistsService.update(Number(id), updateWishlistDto, userId);
     }
-    async deleteWishlistById(id, req) {
-        const deletedWishlist = await this.wishlistService.deleteOne(id, req.user.id);
-        return deletedWishlist;
+    remove(id, req) {
+        const userId = req.user.id;
+        return this.wishlistsService.remove(Number(id), userId);
     }
 };
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, create_wishlist_dto_1.CreateWishlistDto]),
+    __metadata("design:returntype", void 0)
+], WishlistsController.prototype, "create", null);
+__decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], WishlistsController.prototype, "getWishlists", null);
+    __metadata("design:returntype", void 0)
+], WishlistsController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_wishlist_dto_1.CreateWishlistDto, Object]),
-    __metadata("design:returntype", Promise)
-], WishlistsController.prototype, "createWishlist", null);
-__decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], WishlistsController.prototype, "getWishlistById", null);
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], WishlistsController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Req)()),
+    __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object, Object]),
-    __metadata("design:returntype", Promise)
-], WishlistsController.prototype, "updateWishlistById", null);
+    __metadata("design:paramtypes", [String, Object, update_wishlist_dto_1.UpdateWishlistDto]),
+    __metadata("design:returntype", void 0)
+], WishlistsController.prototype, "update", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
-    __metadata("design:returntype", Promise)
-], WishlistsController.prototype, "deleteWishlistById", null);
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], WishlistsController.prototype, "remove", null);
 WishlistsController = __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('wishlistlists'),
     __metadata("design:paramtypes", [wishlists_service_1.WishlistsService])
 ], WishlistsController);

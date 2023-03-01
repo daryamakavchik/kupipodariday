@@ -9,8 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
-import configuration from '../src/config/config';
-import { AppService } from './app.service';
+import configuration from './config/config';
 import { DatabaseService } from './database/dbservice';
 
 @Module({

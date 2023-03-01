@@ -3,14 +3,14 @@ import { Wishlist } from '../../wishlists/entities/wishlist.entity';
 import { Offer } from '../../offers/entities/offer.entity';
 export declare class User {
     id: number;
-    createdAt: Date;
-    updatedAt: Date;
     username: string;
     about: string;
     avatar: string;
     email: string;
     password: string;
+    createdAt: Date;
+    updatedAt: Date;
     wishes: Wish[];
+    wishlist: Wishlist;
     offers: Offer[];
-    wishlists: Wishlist[];
 }

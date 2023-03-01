@@ -21,6 +21,33 @@ __decorate([
     __metadata("design:type", Number)
 ], Wishlist.prototype, "id", void 0);
 __decorate([
+    (0, typeorm_1.Column)({
+        type: 'varchar',
+        length: 250,
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Max)(250),
+    __metadata("design:type", String)
+], Wishlist.prototype, "name", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        type: 'varchar',
+        length: 1500,
+        nullable: true,
+    }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.Max)(1500),
+    __metadata("design:type", String)
+], Wishlist.prototype, "description", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        type: 'varchar',
+    }),
+    (0, class_validator_1.IsUrl)(),
+    __metadata("design:type", String)
+], Wishlist.prototype, "image", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Wishlist.prototype, "createdAt", void 0);
@@ -29,26 +56,16 @@ __decorate([
     __metadata("design:type", Date)
 ], Wishlist.prototype, "updatedAt", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
-    (0, class_validator_1.Min)(1),
-    (0, class_validator_1.Max)(250),
-    __metadata("design:type", String)
-], Wishlist.prototype, "name", void 0);
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.wishlist, {
+        cascade: true,
+    }),
+    __metadata("design:type", user_entity_1.User)
+], Wishlist.prototype, "owner", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
-    (0, class_validator_1.IsUrl)(),
-    __metadata("design:type", String)
-], Wishlist.prototype, "image", void 0);
-__decorate([
-    (0, typeorm_1.ManyToMany)(() => wish_entity_1.Wish, (wish) => wish.id, { cascade: true }),
+    (0, typeorm_1.ManyToMany)(() => wish_entity_1.Wish),
     (0, typeorm_1.JoinTable)(),
     __metadata("design:type", Array)
 ], Wishlist.prototype, "items", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User),
-    (0, typeorm_1.JoinColumn)(),
-    __metadata("design:type", user_entity_1.User)
-], Wishlist.prototype, "owner", void 0);
 Wishlist = __decorate([
     (0, typeorm_1.Entity)()
 ], Wishlist);

@@ -8,6 +8,7 @@ export declare class UsersService {
     create(createUserDto: CreateUserDto): Promise<User>;
     findById(id: number): Promise<User>;
     findByUsername(username: string): Promise<User>;
+    findByEmail(email: string): Promise<User>;
     updateOne(user: User, updateUserDto: UpdateUserDto): Promise<{}>;
     findMany(query: string): Promise<User[]>;
 }

@@ -18,8 +18,8 @@ const auth_module_1 = require("./auth/auth.module");
 const config_1 = require("@nestjs/config");
 const nest_winston_1 = require("nest-winston");
 const winston = require("winston");
-const database_config_1 = require("./config/database.config");
-const app_service_1 = require("./app.service");
+const config_2 = require("./config/config");
+const dbservice_1 = require("./database/dbservice");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -40,11 +40,11 @@ AppModule = __decorate([
             }),
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-                load: [database_config_1.default],
+                load: [config_2.default],
             }),
             typeorm_1.TypeOrmModule.forRootAsync({
-                inject: [config_1.ConfigService],
-                useFactory: async (configService) => (Object.assign({}, configService.get('database')))
+                useClass: dbservice_1.DatabaseService,
+                inject: [dbservice_1.DatabaseService],
             }),
             users_module_1.UsersModule,
             wishes_module_1.WishesModule,
@@ -53,7 +53,7 @@ AppModule = __decorate([
             auth_module_1.AuthModule,
         ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [dbservice_1.DatabaseService],
     })
 ], AppModule);
 exports.AppModule = AppModule;

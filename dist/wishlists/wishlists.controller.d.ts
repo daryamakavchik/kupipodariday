@@ -1,11 +1,12 @@
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
+import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { WishlistsService } from './wishlists.service';
 export declare class WishlistsController {
-    private wishlistService;
-    constructor(wishlistService: WishlistsService);
-    getWishlists(): Promise<import("./entities/wishlist.entity").Wishlist[]>;
-    createWishlist(createWishlistDto: CreateWishlistDto, req: any): Promise<import("./entities/wishlist.entity").Wishlist>;
-    getWishlistById(id: number): Promise<import("./entities/wishlist.entity").Wishlist>;
-    updateWishlistById(id: number, Body: any, req: any): Promise<import("./entities/wishlist.entity").Wishlist>;
-    deleteWishlistById(id: number, req: any): Promise<import("./entities/wishlist.entity").Wishlist>;
+    private readonly wishlistsService;
+    constructor(wishlistsService: WishlistsService);
+    create(req: any, createWishlistDto: CreateWishlistDto): Promise<import("./entities/wishlist.entity").Wishlist>;
+    findAll(): Promise<import("./entities/wishlist.entity").Wishlist[]>;
+    findOne(id: string): Promise<import("./entities/wishlist.entity").Wishlist>;
+    update(id: string, req: any, updateWishlistDto: UpdateWishlistDto): Promise<import("./entities/wishlist.entity").Wishlist>;
+    remove(id: string, req: any): Promise<import("./entities/wishlist.entity").Wishlist>;
 }

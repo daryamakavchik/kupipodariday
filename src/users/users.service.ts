@@ -6,7 +6,7 @@ import { User } from './entities/user.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { Like } from 'typeorm';
 
 
@@ -32,6 +32,10 @@ export class UsersService {
 
   async findByUsername(username: string): Promise<User> {
     return await this.userRepository.findOneBy({ username });
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    return await this.userRepository.findOneBy({ email });
   }
 
   async updateOne(user: User, updateUserDto: UpdateUserDto) {

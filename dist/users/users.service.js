@@ -17,14 +17,14 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("./entities/user.entity");
 const typeorm_2 = require("typeorm");
-const bcrypt_1 = require("bcrypt");
+const bcrypt = require("bcrypt");
 const typeorm_3 = require("typeorm");
 let UsersService = class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
     create(createUserDto) {
-        return bcrypt_1.default.hash(createUserDto.password, 10).then((hashed) => this.userRepository.save(Object.assign(Object.assign({}, createUserDto), { password: hashed })));
+        return bcrypt.hash(createUserDto.password, 10).then((hashed) => this.userRepository.save(Object.assign(Object.assign({}, createUserDto), { password: hashed })));
     }
     findById(id) {
         return this.userRepository.findOneBy({ id });
@@ -32,10 +32,13 @@ let UsersService = class UsersService {
     async findByUsername(username) {
         return await this.userRepository.findOneBy({ username });
     }
+    async findByEmail(email) {
+        return await this.userRepository.findOneBy({ email });
+    }
     async updateOne(user, updateUserDto) {
         let updatedUser = {};
         if (updateUserDto.hasOwnProperty('password')) {
-            updatedUser = await bcrypt_1.default
+            updatedUser = await bcrypt
                 .hash(updateUserDto.password, 10)
                 .then((hashed) => this.userRepository.save(Object.assign(Object.assign(Object.assign({}, user), updateUserDto), { password: hashed })));
         }
