@@ -12,10 +12,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { WishesService } from 'src/wishes/wishes.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
-import { Wish } from 'src/wishes/entities/wish.entity';
-import { User } from './entities/user.entity';
-import { NotFoundException } from '@nestjs/common';
 
 // @UseInterceptors(FormatUserInterceptor)
 @UseGuards(JwtAuthGuard)

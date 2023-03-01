@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Length, Min, Max, IsUrl, IsEmail, IsString  } from 'class-validator';
+import { Length, IsUrl, IsEmail, IsString  } from 'class-validator';
 import { Wish } from '../../wishes/entities/wish.entity';
 import { Wishlist } from '../../wishlists/entities/wishlist.entity';
 import { Offer } from '../../offers/entities/offer.entity';

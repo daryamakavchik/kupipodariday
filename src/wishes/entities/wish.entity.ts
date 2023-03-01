@@ -6,7 +6,6 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
-  JoinColumn
 } from 'typeorm';
 import { Length, Min, Max, IsUrl, IsString, IsNumber } from 'class-validator';
 import { User } from '../../users/entities/user.entity';

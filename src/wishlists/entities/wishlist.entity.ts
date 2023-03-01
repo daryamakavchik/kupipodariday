@@ -2,15 +2,13 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   ManyToOne,
   ManyToMany,
-  JoinColumn,
   JoinTable,
   UpdateDateColumn,
   CreateDateColumn,
 } from "typeorm";
-import { Length, Min, Max, IsUrl, IsString } from "class-validator";
+import { Min, Max, IsUrl, IsString } from "class-validator";
 import { User } from "src/users/entities/user.entity";
 import { Wish } from "../../wishes/entities/wish.entity";
 

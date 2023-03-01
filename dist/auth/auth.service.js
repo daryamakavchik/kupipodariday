@@ -13,7 +13,7 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const users_service_1 = require("../users/users.service");
-const bcrypt_1 = require("bcrypt");
+const bcrypt = require("bcrypt");
 const error_constants_1 = require("../exceptions/error-constants");
 const exception_constructor_1 = require("../exceptions/exception-constructor");
 let AuthService = class AuthService {
@@ -30,7 +30,7 @@ let AuthService = class AuthService {
         if (!user) {
             throw new exception_constructor_1.ServerException(error_constants_1.ErrorCode.LoginOrPasswordIncorrect);
         }
-        const matched = await bcrypt_1.default.compare(password, user.password);
+        const matched = await bcrypt.compare(password, user.password);
         if (!matched) {
             throw new exception_constructor_1.ServerException(error_constants_1.ErrorCode.LoginOrPasswordIncorrect);
         }

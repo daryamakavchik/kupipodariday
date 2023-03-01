@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Offer }  from '../offers/entities/offer.entity';
 import { Repository, DataSource } from 'typeorm';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { WishesService } from 'src/wishes/wishes.service';
 import { User } from 'src/users/entities/user.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 
