@@ -11,31 +11,24 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { OffersService } from './offers.service';
 
+@UseGuards(JwtAuthGuard)
 @Controller('offers')
 export class OffersController {
-  constructor(private offerService: OffersService) {}
+  constructor(private readonly offersService: OffersService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Req() req, @Body() createOfferDto: CreateOfferDto) {
-    const offer = await this.offerService.create(createOfferDto, req.user.id);
-
-    return offer;
+  create(@Req() req, @Body() createOfferDto: CreateOfferDto) {
+    const userId = req.user.id;
+    return this.offersService.create(createOfferDto, Number(userId));
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
-  async getOffers() {
-    const offers = await this.offerService.findMany();
-
-    return offers;
+  findAll() {
+    return this.offersService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async getOfferById(@Param('id') id: number) {
-    const offer = await this.offerService.findOne(id);
-
-    return offer;
+  findOne(@Param('id') id: string) {
+    return this.offersService.findOne(Number(id));
   }
 }

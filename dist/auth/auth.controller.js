@@ -24,17 +24,17 @@ let AuthController = class AuthController {
         this.authService = authService;
     }
     signin(req) {
-        return this.authService.login(req.user);
+        return this.authService.auth(req.user);
     }
     async signup(createUserDto) {
         const user = await this.usersService.create(createUserDto);
-        return this.authService.login(user);
+        return this.authService.auth(user);
     }
 };
 __decorate([
     (0, common_1.UseGuards)(local_auth_guard_1.LocalGuard),
     (0, common_1.Post)('signin'),
-    __param(0, (0, common_1.Request)()),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)

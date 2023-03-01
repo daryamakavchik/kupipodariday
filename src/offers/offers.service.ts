@@ -1,58 +1,80 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Offer }  from '../offers/entities/offer.entity';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { WishesService } from 'src/wishes/wishes.service';
+import { User } from 'src/users/entities/user.entity';
+import { Wish } from 'src/wishes/entities/wish.entity';
 
 @Injectable()
 export class OffersService {
   constructor(
+    private dataSource: DataSource,
     @InjectRepository(Offer)
     private offerRepository: Repository<Offer>,
-    private wishService: WishesService,
+    @InjectRepository(Wish)
+    private wishRepository: Repository<Wish>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
-  async create(createOfferDto: CreateOfferDto, user: any) {
-    const checkUser = await this.checkUser(createOfferDto.id, user);
+  async create(createOfferDto: CreateOfferDto, userId: number) {
+    const { itemId, hidden, amount } = createOfferDto;
+    const user = await this.userRepository.findOneBy({ id: userId });
+    const wish = await this.wishRepository.findOne({
+      where: { id: itemId },
+      relations: ['owner'],
+    });
 
-    if (checkUser) {
-      throw new Error('own offer');
+    if (!wish) {
+          throw new Error()
     }
 
-    const { price, raised } = await this.wishService.getRaised(
-      createOfferDto.id,
-    );
-
-    const newRaised = raised + createOfferDto.amount;
-    if (price < newRaised) {
-      throw new Error('too much');
+    if (wish.owner.id === user.id) {
+      throw new Error()
     }
 
-    const offerData = {
-      user,
-      item: createOfferDto.id,
-      amount: createOfferDto.amount,
-      hidden: createOfferDto.hidden,
-    };
-    const offer = await this.offerRepository.create(offerData);
-    await this.wishService.updateRaised(createOfferDto.id, newRaised);
+    const raised = wish.raised + amount;
 
-    return this.offerRepository.save(offer);
+    if (raised > wish.price) {
+      throw new Error()
+    } else {
+      wish.raised = wish.raised + amount;
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.insert(Offer, {
+        amount,
+        hidden,
+        user,
+        //item: wish,
+      });
+      await queryRunner.manager.save(wish);
+      await queryRunner.commitTransaction();
+      return {};
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      return false;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
-  async findMany() {
-    const offers = await this.offerRepository.find();
-    return offers;
+  findAll() {
+    return this.offerRepository.find({
+      relations: ['items'],
+    });
   }
 
-  async findOne(id: number) {
-    const offer = await this.offerRepository.findOne({ where: { id }});
-    return offer;
-  }
-
-  async checkUser(item, id) {
-    const itemOwnerId = await this.wishService.findOne(item);
-    return itemOwnerId.owner === id;
+  findOne(id: number) {
+    return this.offerRepository.findOne({
+      where: { id },
+      relations: { user: true },
+    });
   }
 }

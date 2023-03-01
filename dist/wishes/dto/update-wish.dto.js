@@ -14,21 +14,7 @@ const class_validator_1 = require("class-validator");
 class UpdateWishDto {
 }
 __decorate([
-    (0, class_validator_1.IsDefined)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], UpdateWishDto.prototype, "id", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], UpdateWishDto.prototype, "createdAt", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], UpdateWishDto.prototype, "updatedAt", void 0);
-__decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(1, 250),
     __metadata("design:type", String)
 ], UpdateWishDto.prototype, "name", void 0);
 __decorate([
@@ -40,25 +26,14 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateWishDto.prototype, "image", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsInt)(),
     __metadata("design:type", Number)
 ], UpdateWishDto.prototype, "price", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], UpdateWishDto.prototype, "raised", void 0);
-__decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(1, 1024),
+    (0, class_validator_1.MinLength)(1),
+    (0, class_validator_1.MaxLength)(1024),
     __metadata("design:type", String)
 ], UpdateWishDto.prototype, "description", void 0);
-__decorate([
-    (0, class_validator_1.IsArray)(),
-    __metadata("design:type", Array)
-], UpdateWishDto.prototype, "offers", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], UpdateWishDto.prototype, "copied", void 0);
 exports.UpdateWishDto = UpdateWishDto;
 //# sourceMappingURL=update-wish.dto.js.map

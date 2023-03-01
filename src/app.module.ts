@@ -9,8 +9,9 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
-import dbConfig from './config/database.config';
+import configuration from '../src/config/config';
 import { AppService } from './app.service';
+import { DatabaseService } from './database/dbservice';
 
 @Module({
   imports: [
@@ -29,11 +30,11 @@ import { AppService } from './app.service';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [dbConfig],
+      load: [configuration],
     }),
     TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({...configService.get('database')})
+      useClass: DatabaseService,
+      inject: [DatabaseService],
     }),
     UsersModule,
     WishesModule,
@@ -42,7 +43,7 @@ import { AppService } from './app.service';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [DatabaseService],
 })
 
 export class AppModule {} 

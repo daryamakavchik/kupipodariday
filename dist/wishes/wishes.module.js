@@ -12,11 +12,13 @@ const typeorm_1 = require("@nestjs/typeorm");
 const wishes_controller_1 = require("./wishes.controller");
 const wishes_service_1 = require("./wishes.service");
 const wish_entity_1 = require("./entities/wish.entity");
+const user_entity_1 = require("../users/entities/user.entity");
+const offer_entity_1 = require("../offers/entities/offer.entity");
 let WishesModule = class WishesModule {
 };
 WishesModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([wish_entity_1.Wish])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, wish_entity_1.Wish, offer_entity_1.Offer])],
         providers: [wishes_service_1.WishesService],
         controllers: [wishes_controller_1.WishesController],
         exports: [wishes_service_1.WishesService],

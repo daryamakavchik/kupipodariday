@@ -14,30 +14,15 @@ const class_validator_1 = require("class-validator");
 class CreateOfferDto {
 }
 __decorate([
-    (0, class_validator_1.IsDefined)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], CreateOfferDto.prototype, "id", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], CreateOfferDto.prototype, "createdAt", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], CreateOfferDto.prototype, "updatedAt", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], CreateOfferDto.prototype, "user", void 0);
-__decorate([
-    (0, class_validator_1.IsUrl)(),
-    __metadata("design:type", String)
-], CreateOfferDto.prototype, "item", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
 ], CreateOfferDto.prototype, "amount", void 0);
+__decorate([
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Number)
+], CreateOfferDto.prototype, "itemId", void 0);
 __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)

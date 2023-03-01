@@ -14,35 +14,19 @@ const class_validator_1 = require("class-validator");
 class CreateWishlistDto {
 }
 __decorate([
-    (0, class_validator_1.IsDefined)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], CreateWishlistDto.prototype, "id", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], CreateWishlistDto.prototype, "createdAt", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], CreateWishlistDto.prototype, "updatedAt", void 0);
-__decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(1, 250),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.MaxLength)(250),
     __metadata("design:type", String)
 ], CreateWishlistDto.prototype, "name", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(1, 1500),
-    __metadata("design:type", String)
-], CreateWishlistDto.prototype, "description", void 0);
 __decorate([
     (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
 ], CreateWishlistDto.prototype, "image", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Array)
-], CreateWishlistDto.prototype, "items", void 0);
+], CreateWishlistDto.prototype, "itemsId", void 0);
 exports.CreateWishlistDto = CreateWishlistDto;
 //# sourceMappingURL=create-wishlist.dto.js.map

@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Wish } from "./entities/wish.entity";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { CreateWishDto } from "./dto/create-wish.dto";
 import { User } from "../users/entities/user.entity";
 import { UpdateWishDto } from "./dto/update-wish.dto";
@@ -10,119 +10,143 @@ import { UpdateWishDto } from "./dto/update-wish.dto";
 @Injectable()
 export class WishesService {
   constructor(
+    private dataSource: DataSource,
     @InjectRepository(Wish)
-    private wishRepository: Repository<Wish>
+    private wishRepository: Repository<Wish>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
-  async create(createWishDto: CreateWishDto, owner: User) {
-    const wishData = {
+  async create(user: User, createWishDto: CreateWishDto) {
+    const wish = this.wishRepository.save({
       ...createWishDto,
-      owner,
-    };
-    const wish = this.wishRepository.create(wishData);
-    return this.wishRepository.save(wish);
-  }
-
-  async findOne(id: number) {
-    const wish = await this.wishRepository.findOne({ where: { id }});
+      owner: user,
+    });
     return wish;
   }
 
-  async updateOne(id, updateWishDto: UpdateWishDto, user) {
-    const wish = await this.findOne(id);
-    if (wish.owner !== user) {
-      throw new Error("own");
+  findUsersWishes(id: number) {
+    return this.wishRepository.find({
+      where: {
+        owner: {
+          id,
+        },
+      },
+    });
+  }
+
+  findLastWishes() {
+    return this.wishRepository.find({
+      relations: {
+        owner: true,
+        offers: true,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+      take: 40,
+    });
+  }
+
+  findTopWishes() {
+    return this.wishRepository.find({
+      relations: {
+        owner: true,
+        offers: true,
+      },
+      order: {
+        copied: 'DESC',
+      },
+      take: 20,
+    });
+  }
+
+  findOne(id: number) {
+    return this.wishRepository.findOne({
+      where: { id },
+      relations: {
+        owner: true,
+        offers: true,
+      },
+    });
+  }
+
+  async update(id: number, userId: number, updateWishDto: UpdateWishDto) {
+    const candidate = await this.findOne(id);
+
+    if (!candidate) {
+      throw new Error();
     }
-    if (wish.offers.length > 0) {
-      const { price, ...result } = updateWishDto;
-      await this.wishRepository.update({ id }, result);
-      return await this.findOne(id);
+
+    if (candidate.offers.length > 0) {
+      throw new Error();
     }
-    await this.wishRepository.update({ id }, updateWishDto);
-    return await this.findOne(id);
-  }
 
-  async findMany(orderBy: string, limit: number) {
-    const wishes = await this.wishRepository.find();
-    return wishes;
-  }
-
-  async getRaised(id: number) {
-    const amount = await this.wishRepository
-      .createQueryBuilder("wish")
-      .select("wish.raised")
-      .addSelect("wish.price")
-      .where({ id })
-      .getOne();
-    return amount;
-  }
-
-  async updateRaised(id: number, raised: number) {
-    await this.wishRepository
-      .createQueryBuilder()
-      .update(Wish)
-      .set({ raised })
-      .where({ id })
-      .execute();
-  }
-
-  async updateCopied(id, copied) {
-    copied = copied + 1;
-    await this.wishRepository
-      .createQueryBuilder()
-      .update(Wish)
-      .set({ copied })
-      .where({ id })
-      .execute();
-  }
-
-  async deleteOne(id: number, userId: number) {
-    const wish = await this.findOne(id);
-    if (!wish) {
-      throw new NotFoundException();
+    if (candidate.owner.id !== userId) {
+      throw new Error();
     }
-    if (+wish.owner !== userId) {
-      throw new Error("own");
-    }
-    await this.wishRepository
-      .createQueryBuilder()
-      .delete()
-      .from(Wish)
-      .where("id = :id", { id })
-      .execute();
 
-    return wish;
-  }
-
-  async copyWish(id: number, userId: User) {
-    const {
-      createdAt,
-      updatedAt,
-      name,
-      link,
-      image,
-      price,
-      description,
-      raised,
-      owner,
-      offers,
-      copied,
-    } = await this.findOne(id);
-    const wishCopy = {
+    return this.wishRepository.save({
       id,
-      createdAt,
-      updatedAt,
-      name,
-      link,
-      image,
-      price,
-      description,
-      raised,
-      owner,
-      offers,
-      copied,
+      ...updateWishDto,
+    });
+  }
+
+  async remove(id: number, userId: number) {
+    const candidate = await this.findOne(id);
+
+    if (!candidate) {
+      throw new Error();
+    }
+
+    if (candidate.owner.id !== userId) {
+      throw new Error();
+    }
+
+    await this.wishRepository.delete({ id });
+
+    return {};
+  }
+
+  async copyWish(wishId: number, userId: number) {
+    const originalWish = await this.wishRepository.findOneBy({ id: wishId });
+
+    if (!originalWish) {
+      throw new Error();
+    }
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new Error();
+    }
+
+    const wishData: CreateWishDto = {
+      name: originalWish.name,
+      description: originalWish.description,
+      link: originalWish.link,
+      image: originalWish.image,
+      price: originalWish.price,
     };
-    await this.create(wishCopy, userId);
-    await this.updateCopied(id, copied);
+
+    originalWish.copied += 1;
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.insert(Wish, {
+        ...wishData,
+        owner: user,
+      });
+      await queryRunner.manager.save(originalWish);
+      await queryRunner.commitTransaction();
+      return {};
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      return false;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

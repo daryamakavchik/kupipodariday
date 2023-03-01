@@ -35,7 +35,7 @@ let WishlistsService = class WishlistsService {
         this.wishService = wishService;
     }
     async create(createWishlistDto, owner) {
-        const wishes = await this.getWishesById(createWishlistDto.items);
+        const wishes = await this.getWishesById(createWishlistDto.itemsId);
         const wishlistData = {
             owner,
             name: createWishlistDto.name,
@@ -54,7 +54,7 @@ let WishlistsService = class WishlistsService {
         if (wish.owner.id !== user) {
             return null;
         }
-        const wishes = await this.getWishesById(updateWishlistDto.items);
+        const wishes = await this.getWishesById(updateWishlistDto.itemsId);
         (wish.name = updateWishlistDto.name || wish.name),
             (wish.image = updateWishlistDto.image || wish.image),
             (wish.items = wishes || wish.items);

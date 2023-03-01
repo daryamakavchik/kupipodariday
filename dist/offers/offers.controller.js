@@ -18,47 +18,43 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const create_offer_dto_1 = require("./dto/create-offer.dto");
 const offers_service_1 = require("./offers.service");
 let OffersController = class OffersController {
-    constructor(offerService) {
-        this.offerService = offerService;
+    constructor(offersService) {
+        this.offersService = offersService;
     }
-    async create(req, createOfferDto) {
-        const offer = await this.offerService.create(createOfferDto, req.user.id);
-        return offer;
+    create(req, createOfferDto) {
+        const userId = req.user.id;
+        return this.offersService.create(createOfferDto, Number(userId));
     }
-    async getOffers() {
-        const offers = await this.offerService.findMany();
-        return offers;
+    findAll() {
+        return this.offersService.findAll();
     }
-    async getOfferById(id) {
-        const offer = await this.offerService.findOne(id);
-        return offer;
+    findOne(id) {
+        return this.offersService.findOne(Number(id));
     }
 };
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, create_offer_dto_1.CreateOfferDto]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], OffersController.prototype, "create", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], OffersController.prototype, "getOffers", null);
+    __metadata("design:returntype", void 0)
+], OffersController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], OffersController.prototype, "getOfferById", null);
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], OffersController.prototype, "findOne", null);
 OffersController = __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('offers'),
     __metadata("design:paramtypes", [offers_service_1.OffersService])
 ], OffersController);

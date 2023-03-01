@@ -1,18 +1,33 @@
 import { Wish } from "./entities/wish.entity";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { CreateWishDto } from "./dto/create-wish.dto";
 import { User } from "../users/entities/user.entity";
 import { UpdateWishDto } from "./dto/update-wish.dto";
 export declare class WishesService {
+    private dataSource;
     private wishRepository;
-    constructor(wishRepository: Repository<Wish>);
-    create(createWishDto: CreateWishDto, owner: User): Promise<Wish>;
+    private userRepository;
+    constructor(dataSource: DataSource, wishRepository: Repository<Wish>, userRepository: Repository<User>);
+    create(user: User, createWishDto: CreateWishDto): Promise<{
+        owner: User;
+        name: string;
+        link: string;
+        image: string;
+        price: number;
+        description: string;
+    } & Wish>;
+    findUsersWishes(id: number): Promise<Wish[]>;
+    findLastWishes(): Promise<Wish[]>;
+    findTopWishes(): Promise<Wish[]>;
     findOne(id: number): Promise<Wish>;
-    updateOne(id: any, updateWishDto: UpdateWishDto, user: any): Promise<Wish>;
-    findMany(orderBy: string, limit: number): Promise<Wish[]>;
-    getRaised(id: number): Promise<Wish>;
-    updateRaised(id: number, raised: number): Promise<void>;
-    updateCopied(id: any, copied: any): Promise<void>;
-    deleteOne(id: number, userId: number): Promise<Wish>;
-    copyWish(id: number, userId: User): Promise<void>;
+    update(id: number, userId: number, updateWishDto: UpdateWishDto): Promise<{
+        name: string;
+        link: string;
+        image: string;
+        price: number;
+        description: string;
+        id: number;
+    } & Wish>;
+    remove(id: number, userId: number): Promise<{}>;
+    copyWish(wishId: number, userId: number): Promise<{}>;
 }

@@ -1,13 +1,15 @@
 import { Offer } from '../offers/entities/offer.entity';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { WishesService } from 'src/wishes/wishes.service';
+import { User } from 'src/users/entities/user.entity';
+import { Wish } from 'src/wishes/entities/wish.entity';
 export declare class OffersService {
+    private dataSource;
     private offerRepository;
-    private wishService;
-    constructor(offerRepository: Repository<Offer>, wishService: WishesService);
-    create(createOfferDto: CreateOfferDto, user: any): Promise<Offer>;
-    findMany(): Promise<Offer[]>;
+    private wishRepository;
+    private userRepository;
+    constructor(dataSource: DataSource, offerRepository: Repository<Offer>, wishRepository: Repository<Wish>, userRepository: Repository<User>);
+    create(createOfferDto: CreateOfferDto, userId: number): Promise<{}>;
+    findAll(): Promise<Offer[]>;
     findOne(id: number): Promise<Offer>;
-    checkUser(item: any, id: any): Promise<boolean>;
 }

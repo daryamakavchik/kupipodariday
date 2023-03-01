@@ -1,0 +1,1 @@
+{"version":3,"file":"exception-constructor.js","sourceRoot":"","sources":["../../src/exceptions/exception-constructor.ts"],"names":[],"mappings":";;;AAAA,2CAA+C;AAC/C,uDAAyE;AAEzE,MAAa,eAAgB,SAAQ,sBAAa;IAChD,YAAY,IAAe;QACzB,KAAK,CAAC,GAAG,8BAAY,CAAC,GAAG,CAAC,IAAI,CAAC,EAAE,EAAE,MAAM,CAAC,6BAAW,CAAC,GAAG,CAAC,IAAI,CAAC,CAAC,CAAC,CAAC;IACpE,CAAC;CACF;AAJD,0CAIC"}

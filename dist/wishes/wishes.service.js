@@ -11,119 +11,131 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WishesService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const wish_entity_1 = require("./entities/wish.entity");
 const typeorm_2 = require("typeorm");
+const user_entity_1 = require("../users/entities/user.entity");
 let WishesService = class WishesService {
-    constructor(wishRepository) {
+    constructor(dataSource, wishRepository, userRepository) {
+        this.dataSource = dataSource;
         this.wishRepository = wishRepository;
+        this.userRepository = userRepository;
     }
-    async create(createWishDto, owner) {
-        const wishData = Object.assign(Object.assign({}, createWishDto), { owner });
-        const wish = this.wishRepository.create(wishData);
-        return this.wishRepository.save(wish);
-    }
-    async findOne(id) {
-        const wish = await this.wishRepository.findOne({ where: { id } });
+    async create(user, createWishDto) {
+        const wish = this.wishRepository.save(Object.assign(Object.assign({}, createWishDto), { owner: user }));
         return wish;
     }
-    async updateOne(id, updateWishDto, user) {
-        const wish = await this.findOne(id);
-        if (wish.owner !== user) {
-            throw new Error("own");
+    findUsersWishes(id) {
+        return this.wishRepository.find({
+            where: {
+                owner: {
+                    id,
+                },
+            },
+        });
+    }
+    findLastWishes() {
+        return this.wishRepository.find({
+            relations: {
+                owner: true,
+                offers: true,
+            },
+            order: {
+                createdAt: 'DESC',
+            },
+            take: 40,
+        });
+    }
+    findTopWishes() {
+        return this.wishRepository.find({
+            relations: {
+                owner: true,
+                offers: true,
+            },
+            order: {
+                copied: 'DESC',
+            },
+            take: 20,
+        });
+    }
+    findOne(id) {
+        return this.wishRepository.findOne({
+            where: { id },
+            relations: {
+                owner: true,
+                offers: true,
+            },
+        });
+    }
+    async update(id, userId, updateWishDto) {
+        const candidate = await this.findOne(id);
+        if (!candidate) {
+            throw new Error();
         }
-        if (wish.offers.length > 0) {
-            const { price } = updateWishDto, result = __rest(updateWishDto, ["price"]);
-            await this.wishRepository.update({ id }, result);
-            return await this.findOne(id);
+        if (candidate.offers.length > 0) {
+            throw new Error();
         }
-        await this.wishRepository.update({ id }, updateWishDto);
-        return await this.findOne(id);
-    }
-    async findMany(orderBy, limit) {
-        const wishes = await this.wishRepository.find();
-        return wishes;
-    }
-    async getRaised(id) {
-        const amount = await this.wishRepository
-            .createQueryBuilder("wish")
-            .select("wish.raised")
-            .addSelect("wish.price")
-            .where({ id })
-            .getOne();
-        return amount;
-    }
-    async updateRaised(id, raised) {
-        await this.wishRepository
-            .createQueryBuilder()
-            .update(wish_entity_1.Wish)
-            .set({ raised })
-            .where({ id })
-            .execute();
-    }
-    async updateCopied(id, copied) {
-        copied = copied + 1;
-        await this.wishRepository
-            .createQueryBuilder()
-            .update(wish_entity_1.Wish)
-            .set({ copied })
-            .where({ id })
-            .execute();
-    }
-    async deleteOne(id, userId) {
-        const wish = await this.findOne(id);
-        if (!wish) {
-            throw new common_1.NotFoundException();
+        if (candidate.owner.id !== userId) {
+            throw new Error();
         }
-        if (+wish.owner !== userId) {
-            throw new Error("own");
-        }
-        await this.wishRepository
-            .createQueryBuilder()
-            .delete()
-            .from(wish_entity_1.Wish)
-            .where("id = :id", { id })
-            .execute();
-        return wish;
+        return this.wishRepository.save(Object.assign({ id }, updateWishDto));
     }
-    async copyWish(id, userId) {
-        const { createdAt, updatedAt, name, link, image, price, description, raised, owner, offers, copied, } = await this.findOne(id);
-        const wishCopy = {
-            id,
-            createdAt,
-            updatedAt,
-            name,
-            link,
-            image,
-            price,
-            description,
-            raised,
-            owner,
-            offers,
-            copied,
+    async remove(id, userId) {
+        const candidate = await this.findOne(id);
+        if (!candidate) {
+            throw new Error();
+        }
+        if (candidate.owner.id !== userId) {
+            throw new Error();
+        }
+        await this.wishRepository.delete({ id });
+        return {};
+    }
+    async copyWish(wishId, userId) {
+        const originalWish = await this.wishRepository.findOneBy({ id: wishId });
+        if (!originalWish) {
+            throw new Error();
+        }
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) {
+            throw new Error();
+        }
+        const wishData = {
+            name: originalWish.name,
+            description: originalWish.description,
+            link: originalWish.link,
+            image: originalWish.image,
+            price: originalWish.price,
         };
-        await this.create(wishCopy, userId);
-        await this.updateCopied(id, copied);
+        originalWish.copied += 1;
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+            await queryRunner.manager.insert(wish_entity_1.Wish, Object.assign(Object.assign({}, wishData), { owner: user }));
+            await queryRunner.manager.save(originalWish);
+            await queryRunner.commitTransaction();
+            return {};
+        }
+        catch (err) {
+            await queryRunner.rollbackTransaction();
+            return false;
+        }
+        finally {
+            await queryRunner.release();
+        }
     }
 };
 WishesService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(wish_entity_1.Wish)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(wish_entity_1.Wish)),
+    __param(2, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __metadata("design:paramtypes", [typeorm_2.DataSource,
+        typeorm_2.Repository,
+        typeorm_2.Repository])
 ], WishesService);
 exports.WishesService = WishesService;
 //# sourceMappingURL=wishes.service.js.map

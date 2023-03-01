@@ -14,25 +14,13 @@ const class_validator_1 = require("class-validator");
 class CreateWishDto {
 }
 __decorate([
-    (0, class_validator_1.IsDefined)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], CreateWishDto.prototype, "id", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], CreateWishDto.prototype, "createdAt", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], CreateWishDto.prototype, "updatedAt", void 0);
-__decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(1, 250),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateWishDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsUrl)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateWishDto.prototype, "link", void 0);
 __decorate([
@@ -40,25 +28,15 @@ __decorate([
     __metadata("design:type", String)
 ], CreateWishDto.prototype, "image", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
 ], CreateWishDto.prototype, "price", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], CreateWishDto.prototype, "raised", void 0);
-__decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(1, 1024),
+    (0, class_validator_1.MinLength)(1),
+    (0, class_validator_1.MaxLength)(1024),
     __metadata("design:type", String)
 ], CreateWishDto.prototype, "description", void 0);
-__decorate([
-    (0, class_validator_1.IsArray)(),
-    __metadata("design:type", Array)
-], CreateWishDto.prototype, "offers", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], CreateWishDto.prototype, "copied", void 0);
 exports.CreateWishDto = CreateWishDto;
 //# sourceMappingURL=create-wish.dto.js.map

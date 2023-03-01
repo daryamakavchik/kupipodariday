@@ -1,12 +1,47 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, ManyToMany, JoinColumn, JoinTable, UpdateDateColumn, CreateDateColumn } from 'typeorm';
-import { Length, Min, Max, IsUrl } from 'class-validator';
-import { User } from 'src/users/entities/user.entity';
-import { Wish } from '../../wishes/entities/wish.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+  ManyToMany,
+  JoinColumn,
+  JoinTable,
+  UpdateDateColumn,
+  CreateDateColumn,
+} from "typeorm";
+import { Length, Min, Max, IsUrl, IsString } from "class-validator";
+import { User } from "src/users/entities/user.entity";
+import { Wish } from "../../wishes/entities/wish.entity";
 
 @Entity()
-export  class Wishlist {
+export class Wishlist {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({
+    type: 'varchar',
+    length: 250,
+  })
+  @IsString()
+  @Min(1)
+  @Max(250)
+  name: string;
+
+  @Column({
+    type: 'varchar',
+    length: 1500,
+    nullable: true,
+  })
+  @IsString()
+  @Max(1500)
+  description: string;
+
+  @Column({
+    type: 'varchar',
+  })
+  @IsUrl()
+  image: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -14,20 +49,12 @@ export  class Wishlist {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
-  @Min(1)
-  @Max(250)
-  name: string;
-
-  @Column()
-  @IsUrl()
-  image: string;
-
-  @ManyToMany(() => Wish, (wish) => wish.id, { cascade: true })
-  @JoinTable()
-  items: any[];
-
-  @ManyToOne(() => User)
-  @JoinColumn()
+  @ManyToOne(() => User, (user) => user.wishlist, {
+    cascade: true,
+  })
   owner: User;
+
+  @ManyToMany(() => Wish)
+  @JoinTable()
+  items: Wish[];
 }

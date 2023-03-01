@@ -14,70 +14,50 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("typeorm");
-const typeorm_2 = require("@nestjs/typeorm");
+const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("./entities/user.entity");
-const bcrypt = require("bcrypt");
+const typeorm_2 = require("typeorm");
+const bcrypt_1 = require("bcrypt");
+const typeorm_3 = require("typeorm");
 let UsersService = class UsersService {
-    constructor(usersRepository) {
-        this.usersRepository = usersRepository;
+    constructor(userRepository) {
+        this.userRepository = userRepository;
     }
-    async create(createUserDto) {
-        const hash = await bcrypt.hash(createUserDto.password, 10);
-        const createUserWithHashPassword = Object.assign(Object.assign({}, createUserDto), { password: hash });
-        const user = await this.usersRepository.create(createUserWithHashPassword);
-        return this.usersRepository.save(user);
+    create(createUserDto) {
+        return bcrypt_1.default.hash(createUserDto.password, 10).then((hashed) => this.userRepository.save(Object.assign(Object.assign({}, createUserDto), { password: hashed })));
     }
-    async findOne(id) {
-        const user = await this.usersRepository
-            .createQueryBuilder('user')
-            .where({ id })
-            .addSelect('user.email')
-            .getOne();
-        return user;
-    }
-    async findAll() {
-        const users = await this.usersRepository.find();
-        return users;
+    findById(id) {
+        return this.userRepository.findOneBy({ id });
     }
     async findByUsername(username) {
-        const user = await this.usersRepository
-            .createQueryBuilder('user')
-            .leftJoinAndSelect('user.wishes', 'wish')
-            .where({ username })
-            .addSelect('user.password')
-            .addSelect('user.email')
-            .getOne();
-        return user;
+        return await this.userRepository.findOneBy({ username });
     }
-    async updateOne(id, updateUserDto) {
-        if (updateUserDto.password) {
-            const hash = await bcrypt.hash(updateUserDto.password, 10);
-            updateUserDto.password = hash;
+    async updateOne(user, updateUserDto) {
+        let updatedUser = {};
+        if (updateUserDto.hasOwnProperty('password')) {
+            updatedUser = await bcrypt_1.default
+                .hash(updateUserDto.password, 10)
+                .then((hashed) => this.userRepository.save(Object.assign(Object.assign(Object.assign({}, user), updateUserDto), { password: hashed })));
         }
-        await this.usersRepository.update({ id }, updateUserDto);
-        const user = await this.findOne(id);
-        return user;
-    }
-    async getWishes(username) {
-        const user = await this.findByUsername(username);
-        const { wishes } = user;
-        return wishes;
+        else {
+            updatedUser = await this.userRepository.save(Object.assign(Object.assign({}, user), updateUserDto));
+        }
+        return updatedUser;
     }
     async findMany(query) {
-        const users = await this.usersRepository.find({
-            where: [
-                { username: (0, typeorm_1.Like)(query) },
-                { email: (0, typeorm_1.Like)(query) }
-            ]
+        const users = await this.userRepository.find({
+            where: [{ username: (0, typeorm_3.Like)(`%${query}%`) }, { email: (0, typeorm_3.Like)(`%${query}%`) }],
         });
+        if (!users.length) {
+            throw new Error();
+        }
         return users;
     }
 };
 UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_2.InjectRepository)(user_entity_1.User)),
-    __metadata("design:paramtypes", [typeorm_1.Repository])
+    __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

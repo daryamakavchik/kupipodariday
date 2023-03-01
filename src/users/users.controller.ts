@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Req,
   UseGuards,
   Body,
@@ -9,53 +10,63 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UsersService } from './users.service';
+import { WishesService } from 'src/wishes/wishes.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { FindUserDto } from './dto/find-user.dto';
+import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
+import { Wish } from 'src/wishes/entities/wish.entity';
+import { User } from './entities/user.entity';
+import { NotFoundException } from '@nestjs/common';
 
+// @UseInterceptors(FormatUserInterceptor)
 @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
-  private usersService: UsersService,
+    private readonly usersService: UsersService,
+    private readonly wishesService: WishesService,
   ) {}
 
-  @Get('')
-  getAll() {
-    return this.usersService.findAll()
+  @Get('/me')
+  findMe(@Req() req) {
+    return req.user;
   }
 
-  @Get('me')
-  getMe(@Req() req) {
-    return req.user
+  @Patch('/me')
+  update(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateOne(req.user, updateUserDto);
   }
 
-  @Patch('me')
-  async updateMe(@Req() req, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateOne(req.user.id, updateUserDto);
-  }
+  @Get('/me/wishes')
+  async findMeWishes(@Req() req) {
+    const { id } = req.user;
 
-  @Get('me/wishes')
-  async getWishes(@Req() req) {
-    const wishes = await this.usersService.getWishes(req.user.username);
-    return wishes;
+    return this.wishesService.findUsersWishes(id);
   }
 
   @Get(':username')
-  async getUserByUsername(@Param('username') username: string) {
-    const user = await this.usersService.findMany(username);
+  async findOne(@Param('username') username: string) {
+    const user = await this.usersService.findByUsername(username);
+
+    if (!user) {
+      throw new Error();
+    }
+
     return user;
   }
 
   @Get(':username/wishes')
-  async getWishesByUsername(@Param('username') username: string) {
-    const wishes = await this.usersService.getWishes(username);
-    return wishes;
+  async findUsersWishes(@Param('username') username: string) {
+    const user = await this.usersService.findByUsername(username);
+
+    if (!user) {
+      throw new Error();
+    }
+
+    return this.wishesService.findUsersWishes(user.id);
   }
 
   @Post('find')
-  async findUser(@Body() findUserDto: FindUserDto) {
-    console.log(findUserDto);
-    const user = await this.usersService.findMany(findUserDto.query);
-    return user;
+  async findMany(@Body('query') query: string) {
+    return await this.usersService.findMany(query);
   }
 }

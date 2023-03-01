@@ -1,9 +1,5 @@
 export declare class CreateOfferDto {
-    id: number;
-    createdAt: Date;
-    updatedAt: Date;
-    user: number;
-    item: string;
     amount: number;
+    itemId: number;
     hidden: boolean;
 }

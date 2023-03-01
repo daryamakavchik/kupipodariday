@@ -8,49 +8,39 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const users_service_1 = require("../users/users.service");
-const bcrypt = require("bcrypt");
-const config_1 = require("@nestjs/config");
+const bcrypt_1 = require("bcrypt");
+const error_constants_1 = require("../exceptions/error-constants");
+const exception_constructor_1 = require("../exceptions/exception-constructor");
 let AuthService = class AuthService {
-    constructor(jwtService, usersService, configService) {
+    constructor(jwtService, userService) {
         this.jwtService = jwtService;
-        this.usersService = usersService;
-        this.configService = configService;
+        this.userService = userService;
     }
-    login(user) {
+    auth(user) {
         const payload = { sub: user.id };
         return { access_token: this.jwtService.sign(payload) };
     }
     async validatePassword(username, password) {
-        const user = await this.usersService.findByUsername(username);
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (user && isMatch) {
-            const { password } = user, result = __rest(user, ["password"]);
-            return result;
+        const user = await this.userService.findByUsername(username);
+        if (!user) {
+            throw new exception_constructor_1.ServerException(error_constants_1.ErrorCode.LoginOrPasswordIncorrect);
         }
-        return null;
+        const matched = await bcrypt_1.default.compare(password, user.password);
+        if (!matched) {
+            throw new exception_constructor_1.ServerException(error_constants_1.ErrorCode.LoginOrPasswordIncorrect);
+        }
+        return user;
     }
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [jwt_1.JwtService,
-        users_service_1.UsersService,
-        config_1.ConfigService])
+        users_service_1.UsersService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map

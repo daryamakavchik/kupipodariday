@@ -22,94 +22,89 @@ let WishesController = class WishesController {
     constructor(wishesService) {
         this.wishesService = wishesService;
     }
-    async createWish(createWishDto, req) {
-        const wish = this.wishesService.create(createWishDto, req.user.id);
-        return wish;
+    create(req, createWishDto) {
+        return this.wishesService.create(req.user, createWishDto);
     }
-    async getLast() {
-        const wishes = this.wishesService.findMany('createdAt', 40);
-        return wishes;
+    findLastWishes() {
+        return this.wishesService.findLastWishes();
     }
-    async getTop() {
-        const wishes = this.wishesService.findMany('copied', 20);
-        return wishes;
+    findTopWishes() {
+        return this.wishesService.findTopWishes();
     }
-    async getWishById(id) {
-        const wish = this.wishesService.findOne(id);
-        return wish;
+    findOne(id) {
+        return this.wishesService.findOne(Number(id));
     }
-    async updateWish(id, updateWishDto, req) {
-        const wish = await this.wishesService.updateOne(id, updateWishDto, req.user.id);
-        return wish;
+    update(id, req, updateWishDto) {
+        const userId = req.user.id;
+        return this.wishesService.update(Number(id), Number(userId), updateWishDto);
     }
-    async deleteWish(id, req) {
-        const deletedWish = await this.wishesService.deleteOne(id, req.user.id);
-        return deletedWish;
+    remove(id, req) {
+        const userId = req.user.id;
+        return this.wishesService.remove(Number(id), Number(userId));
     }
-    async copyWish(id, req) {
-        await this.wishesService.copyWish(id, req.user.id);
-        return {};
+    copyWish(id, req) {
+        const userId = req.user.id;
+        return this.wishesService.copyWish(Number(id), Number(userId));
     }
 };
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_wish_dto_1.CreateWishDto, Object]),
-    __metadata("design:returntype", Promise)
-], WishesController.prototype, "createWish", null);
-__decorate([
-    (0, common_1.Get)('last'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], WishesController.prototype, "getLast", null);
-__decorate([
-    (0, common_1.Get)('top'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], WishesController.prototype, "getTop", null);
-__decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], WishesController.prototype, "getWishById", null);
-__decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, update_wish_dto_1.UpdateWishDto, Object]),
-    __metadata("design:returntype", Promise)
-], WishesController.prototype, "updateWish", null);
+    __metadata("design:paramtypes", [Object, create_wish_dto_1.CreateWishDto]),
+    __metadata("design:returntype", void 0)
+], WishesController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)("/last"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], WishesController.prototype, "findLastWishes", null);
+__decorate([
+    (0, common_1.Get)("/top"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], WishesController.prototype, "findTopWishes", null);
+__decorate([
+    (0, common_1.Get)(":id"),
+    __param(0, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], WishesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Patch)(":id"),
+    __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
-    __metadata("design:returntype", Promise)
-], WishesController.prototype, "deleteWish", null);
+    __metadata("design:paramtypes", [String, Object, update_wish_dto_1.UpdateWishDto]),
+    __metadata("design:returntype", void 0)
+], WishesController.prototype, "update", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Post)(':id/copy'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Delete)(":id"),
+    __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], WishesController.prototype, "remove", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)(":id/copy"),
+    __param(0, (0, common_1.Param)("id")),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
 ], WishesController.prototype, "copyWish", null);
 WishesController = __decorate([
-    (0, common_1.Controller)('wishes'),
+    (0, common_1.Controller)("wishes"),
     __metadata("design:paramtypes", [wishes_service_1.WishesService])
 ], WishesController);
 exports.WishesController = WishesController;

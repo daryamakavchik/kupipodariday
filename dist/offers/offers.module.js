@@ -13,11 +13,13 @@ const offers_controller_1 = require("./offers.controller");
 const offers_service_1 = require("./offers.service");
 const offer_entity_1 = require("./entities/offer.entity");
 const wishes_module_1 = require("../wishes/wishes.module");
+const wish_entity_1 = require("../wishes/entities/wish.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 let OffersModule = class OffersModule {
 };
 OffersModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([offer_entity_1.Offer]), wishes_module_1.WishesModule],
+        imports: [typeorm_1.TypeOrmModule.forFeature([offer_entity_1.Offer, wish_entity_1.Wish, user_entity_1.User]), wishes_module_1.WishesModule],
         providers: [offers_service_1.OffersService],
         controllers: [offers_controller_1.OffersController],
         exports: [offers_service_1.OffersService],

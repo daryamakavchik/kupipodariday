@@ -9,40 +9,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateWishlistDto = void 0;
+exports.UpdateWislistDto = void 0;
 const class_validator_1 = require("class-validator");
-class UpdateWishlistDto {
+class UpdateWislistDto {
 }
 __decorate([
-    (0, class_validator_1.IsDefined)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], UpdateWishlistDto.prototype, "id", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], UpdateWishlistDto.prototype, "createdAt", void 0);
-__decorate([
-    (0, class_validator_1.IsDate)(),
-    __metadata("design:type", Date)
-], UpdateWishlistDto.prototype, "updatedAt", void 0);
-__decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(1, 250),
     __metadata("design:type", String)
-], UpdateWishlistDto.prototype, "name", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.Length)(1, 1500),
-    __metadata("design:type", String)
-], UpdateWishlistDto.prototype, "description", void 0);
+], UpdateWislistDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
-], UpdateWishlistDto.prototype, "image", void 0);
+], UpdateWislistDto.prototype, "image", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),
     __metadata("design:type", Array)
-], UpdateWishlistDto.prototype, "items", void 0);
-exports.UpdateWishlistDto = UpdateWishlistDto;
+], UpdateWislistDto.prototype, "itemsId", void 0);
+exports.UpdateWislistDto = UpdateWislistDto;
 //# sourceMappingURL=update-wishlist.dto.js.map

@@ -1,82 +1,72 @@
-import { Injectable } from "@nestjs/common";
-import { Repository, Like } from "typeorm";
-import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "./entities/user.entity";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import * as bcrypt from "bcrypt";
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Wish } from 'src/wishes/entities/wish.entity';
+import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
+import { User } from './entities/user.entity';
+import { DeleteResult, Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import bcrypt from 'bcrypt';
+import { Like } from 'typeorm';
+
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>
+    private userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const hash = await bcrypt.hash(createUserDto.password, 10);
-
-    const createUserWithHashPassword: CreateUserDto = {
-      ...createUserDto,
-      password: hash,
-    };
-
-    const user = await this.usersRepository.create(createUserWithHashPassword);
-
-    return this.usersRepository.save(user);
+  create(createUserDto: CreateUserDto): Promise<User> {
+    return bcrypt.hash(createUserDto.password, 10).then((hashed) =>
+      this.userRepository.save({
+        ...createUserDto,
+        password: hashed,
+      }),
+    );
   }
 
-  async findOne(id: number) {
-    const user = await this.usersRepository
-      .createQueryBuilder('user')
-      .where({ id })
-      .addSelect('user.email')
-      .getOne();
-
-    return user;
+  findById(id: number): Promise<User> {
+    return this.userRepository.findOneBy({ id });
   }
 
-  async findAll() {
-    const users = await this.usersRepository.find();
-    return users;
+  async findByUsername(username: string): Promise<User> {
+    return await this.userRepository.findOneBy({ username });
   }
 
-  async findByUsername(username: string) {
-    const user = await this.usersRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.wishes', 'wish')
-      .where({ username })
-      .addSelect('user.password')
-      .addSelect('user.email')
-      .getOne();
-    return user;
-  }
+  async updateOne(user: User, updateUserDto: UpdateUserDto) {
+    let updatedUser = {};
 
-  async updateOne(id: number, updateUserDto: UpdateUserDto) {
-    if (updateUserDto.password) {
-      const hash = await bcrypt.hash(updateUserDto.password, 10);
-      updateUserDto.password = hash;
+    // eslint-disable-next-line no-prototype-builtins
+    if (updateUserDto.hasOwnProperty('password')) {
+      updatedUser = await bcrypt
+        .hash(updateUserDto.password, 10)
+        .then((hashed) =>
+          this.userRepository.save({
+            ...user,
+            ...updateUserDto,
+            password: hashed,
+          }),
+        );
+    } else {
+      updatedUser = await this.userRepository.save({
+        ...user,
+        ...updateUserDto,
+      });
     }
 
-    await this.usersRepository.update({ id }, updateUserDto);
-    const user = await this.findOne(id);
-    return user;
+    return updatedUser;
   }
-
-  async getWishes(username) {
-    const user = await this.findByUsername(username);
-    const { wishes } = user;
-    return wishes;
-  }
-
 
   async findMany(query: string) {
-    const users = await this.usersRepository.find({
-      where: [
-        { username : Like(query) },
-        { email: Like(query) }
-      ]
-    })
+    const users = await this.userRepository.find({
+      where: [{ username: Like(`%${query}%`) }, { email: Like(`%${query}%`) }],
+    });
+
+    if (!users.length) {
+      throw new Error();
+    }
+
     return users;
   }
 }
