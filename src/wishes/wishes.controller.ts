@@ -13,6 +13,8 @@ import { WishesService } from "./wishes.service";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { CreateWishDto } from "./dto/create-wish.dto";
 import { UpdateWishDto } from "./dto/update-wish.dto";
+import { UseInterceptors } from '@nestjs/common';
+import { WishInterceptor } from "src/interceptors/wish-intercept";
 
 @Controller("wishes")
 export class WishesController {
@@ -24,25 +26,25 @@ export class WishesController {
     return this.wishesService.create(req.user, createWishDto);
   }
 
-  //@UseInterceptors(FormatWishInterceptor)
+  @UseInterceptors(WishInterceptor)
   @Get("/last")
   findLastWishes() {
     return this.wishesService.findLastWishes();
   }
 
-  //@UseInterceptors(FormatWishInterceptor)
+  @UseInterceptors(WishInterceptor)
   @Get("/top")
   findTopWishes() {
     return this.wishesService.findTopWishes();
   }
 
-  //@UseInterceptors(FormatWishInterceptor)
+  @UseInterceptors(WishInterceptor)
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.wishesService.findOne(Number(id));
   }
 
-  //@UseInterceptors(FormatWishInterceptor)
+  @UseInterceptors(WishInterceptor)
   @UseGuards(JwtAuthGuard)
   @Patch(":id")
   update(
@@ -54,7 +56,7 @@ export class WishesController {
     return this.wishesService.update(Number(id), Number(userId), updateWishDto);
   }
 
-  //@UseInterceptors(FormatWishInterceptor)
+  @UseInterceptors(WishInterceptor)
   @UseGuards(JwtAuthGuard)
   @Delete(":id")
   remove(@Param("id") id: string, @Req() req) {
@@ -62,7 +64,7 @@ export class WishesController {
     return this.wishesService.remove(Number(id), Number(userId));
   }
 
-  //@UseInterceptors(FormatWishInterceptor)
+  @UseInterceptors(WishInterceptor)
   @UseGuards(JwtAuthGuard)
   @Post(":id/copy")
   copyWish(@Param("id") id: string, @Req() req) {

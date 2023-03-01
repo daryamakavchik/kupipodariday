@@ -15,7 +15,7 @@ import { jwtConstant } from './constants/constants';
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: async () => ({
         secret: jwtConstant.secret
       }),
       inject: [ConfigService],

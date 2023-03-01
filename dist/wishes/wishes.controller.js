@@ -18,6 +18,8 @@ const wishes_service_1 = require("./wishes.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const create_wish_dto_1 = require("./dto/create-wish.dto");
 const update_wish_dto_1 = require("./dto/update-wish.dto");
+const common_2 = require("@nestjs/common");
+const wish_intercept_1 = require("../interceptors/wish-intercept");
 let WishesController = class WishesController {
     constructor(wishesService) {
         this.wishesService = wishesService;
@@ -57,18 +59,21 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], WishesController.prototype, "create", null);
 __decorate([
+    (0, common_2.UseInterceptors)(wish_intercept_1.WishInterceptor),
     (0, common_1.Get)("/last"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], WishesController.prototype, "findLastWishes", null);
 __decorate([
+    (0, common_2.UseInterceptors)(wish_intercept_1.WishInterceptor),
     (0, common_1.Get)("/top"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], WishesController.prototype, "findTopWishes", null);
 __decorate([
+    (0, common_2.UseInterceptors)(wish_intercept_1.WishInterceptor),
     (0, common_1.Get)(":id"),
     __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
@@ -76,6 +81,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], WishesController.prototype, "findOne", null);
 __decorate([
+    (0, common_2.UseInterceptors)(wish_intercept_1.WishInterceptor),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)(":id"),
     __param(0, (0, common_1.Param)("id")),
@@ -86,6 +92,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], WishesController.prototype, "update", null);
 __decorate([
+    (0, common_2.UseInterceptors)(wish_intercept_1.WishInterceptor),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(":id"),
     __param(0, (0, common_1.Param)("id")),
@@ -95,6 +102,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], WishesController.prototype, "remove", null);
 __decorate([
+    (0, common_2.UseInterceptors)(wish_intercept_1.WishInterceptor),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(":id/copy"),
     __param(0, (0, common_1.Param)("id")),

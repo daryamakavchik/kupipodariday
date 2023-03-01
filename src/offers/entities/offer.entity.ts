@@ -16,6 +16,7 @@ export class Offer {
 
   @ManyToOne(() => Wish, (wish) => wish.offers)
   @JoinColumn()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   item: any;
 
   @Column({ select: true })

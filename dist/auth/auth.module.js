@@ -26,7 +26,7 @@ AuthModule = __decorate([
             passport_1.PassportModule,
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],
-                useFactory: async (configService) => ({
+                useFactory: async () => ({
                     secret: constants_1.jwtConstant.secret
                 }),
                 inject: [config_1.ConfigService],

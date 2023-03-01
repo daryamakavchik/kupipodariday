@@ -18,6 +18,8 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const users_service_1 = require("./users.service");
 const wishes_service_1 = require("../wishes/wishes.service");
 const update_user_dto_1 = require("./dto/update-user.dto");
+const common_2 = require("@nestjs/common");
+const user_intercept_1 = require("../interceptors/user-intercept");
 let UsersController = class UsersController {
     constructor(usersService, wishesService) {
         this.usersService = usersService;
@@ -95,6 +97,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findMany", null);
 UsersController = __decorate([
+    (0, common_2.UseInterceptors)(user_intercept_1.UserInterceptor),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService,

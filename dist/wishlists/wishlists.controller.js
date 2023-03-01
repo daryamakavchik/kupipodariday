@@ -18,6 +18,8 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const create_wishlist_dto_1 = require("./dto/create-wishlist.dto");
 const update_wishlist_dto_1 = require("./dto/update-wishlist.dto");
 const wishlists_service_1 = require("./wishlists.service");
+const common_2 = require("@nestjs/common");
+const wish_intercept_1 = require("../interceptors/wish-intercept");
 let WishlistsController = class WishlistsController {
     constructor(wishlistsService) {
         this.wishlistsService = wishlistsService;
@@ -81,6 +83,7 @@ __decorate([
 ], WishlistsController.prototype, "remove", null);
 WishlistsController = __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_2.UseInterceptors)(wish_intercept_1.WishInterceptor),
     (0, common_1.Controller)('wishlistlists'),
     __metadata("design:paramtypes", [wishlists_service_1.WishlistsService])
 ], WishlistsController);

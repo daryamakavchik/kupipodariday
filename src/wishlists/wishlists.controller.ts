@@ -13,9 +13,11 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { WishlistsService } from './wishlists.service';
+import { UseInterceptors } from '@nestjs/common';
+import { WishInterceptor } from "src/interceptors/wish-intercept";
 
 @UseGuards(JwtAuthGuard)
-//@UseInterceptors(FormatWishInterceptor)
+@UseInterceptors(WishInterceptor)
 @Controller('wishlistlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}

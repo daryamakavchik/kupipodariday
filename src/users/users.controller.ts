@@ -12,8 +12,10 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UsersService } from './users.service';
 import { WishesService } from 'src/wishes/wishes.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UseInterceptors } from '@nestjs/common';
+import { UserInterceptor } from 'src/interceptors/user-intercept';
 
-// @UseInterceptors(FormatUserInterceptor)
+@UseInterceptors(UserInterceptor)
 @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
